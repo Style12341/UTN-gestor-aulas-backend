@@ -17,6 +17,7 @@ module ConflictVerifier
     set_ids_periodica(frecuencia) if frecuencia
   end
 
+  private
   def set_ids_periodica(frecuencia)
     @ids_reservas_p_overlap ||= ReservaPeriodica.get_reservas_ids_in_ano_periodicidad(Time.now.year,
                                                                                       frecuencia)
