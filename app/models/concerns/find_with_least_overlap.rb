@@ -18,7 +18,8 @@ module FindWithLeastOverlap
         .where("least_overlap_timerange('#{timerange}', horario) = interval '#{min_overlap}'")
         .order('overlap ASC')
     end
-
+    
+    private
     # Converts either a timerange or from/to values into a timerange string
     def convert_to_timerange(range_or_from, to)
       if to.nil?
