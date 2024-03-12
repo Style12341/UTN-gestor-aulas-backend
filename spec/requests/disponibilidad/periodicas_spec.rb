@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Disponibilidad', type: :request do
   before do
     # Go to beginning of year
-    Timecop.freeze(Date.today.beginning_of_year + 1.day)
+    Timecop.freeze(Date.current.beginning_of_year + 1.day)
     @bedel = Bedel.create!(id: 'bedel', turno: Bedel.turnos.keys.sample, nombre: 'Juan', apellido: 'Perez',
                            password: '12&A45678')
     @aula = Aula.create!(id: 1, piso: 1, numero_aula: 10, capacidad: 15, tipo: 'regular', tipo_pizarron: 'tiza',
@@ -13,32 +13,32 @@ RSpec.describe 'Disponibilidad', type: :request do
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica, cantidad: 2)
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica_2, cantidad: 1)
     @reserva_pasado = @bedel.reservas_periodicas.create!(id_docente: '1', nombre_docente: 'Juan', apellido_docente: 'Perez', correo_docente: 'test@test.com',
-                                                         id_curso: 1, nombre_curso: 'Curso', año: 2023, cantidad_alumnos: 15, fecha_solicitud: Date.today - 1.year, periodicidad: 'anual')
+                                                         id_curso: 1, nombre_curso: 'Curso', año: 2023, cantidad_alumnos: 15, fecha_solicitud: Date.current - 1.year, periodicidad: 'anual')
     @renglon_pasado = @reserva_pasado.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)', aula: @aula)
     @renglon_pasado_1 = @reserva_pasado.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)', aula: @aula)
 
     @reserva_curso_1 = @bedel.reservas_periodicas.create!(id_docente: '1', nombre_docente: 'Juan', apellido_docente: 'Perez',
-                                                          correo_docente: 'test@test.com', id_curso: 1, nombre_curso: 'Curso', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
+                                                          correo_docente: 'test@test.com', id_curso: 1, nombre_curso: 'Curso', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current, periodicidad: 'anual')
     @renglon_curso_1_lunes = @reserva_curso_1.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)',
                                                                 aula: @aula)
     @renglon_curso_1_martes = @reserva_curso_1.renglones.create!(dia: 'martes', horario: '[10:30, 13:00)',
                                                                  aula: @aula)
     @reserva_curso_2 = @bedel.reservas_periodicas.create!(id_docente: '2', nombre_docente: 'Tomas', apellido_docente: 'Perez',
-                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso2', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
+                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso2', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current, periodicidad: 'anual')
     @renglon_curso_2_martes = @reserva_curso_2.renglones.create!(dia: 'martes', horario: '[15:30, 18:00)',
                                                                  aula: @aula)
     @renglon_curso_2_miercoles = @reserva_curso_2.renglones.create!(dia: 'miercoles', horario: '[15:30, 18:00)',
                                                                     aula: @aula)
     @reserva_curso_3 = @bedel.reservas_periodicas.create!(id_docente: '3', nombre_docente: 'Pepe', apellido_docente: 'Perez',
-                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
+                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current, periodicidad: 'anual')
     @renglon_curso_3_miercoles = @reserva_curso_3.renglones.create!(dia: 'jueves', horario: '[15:30, 18:00)',
                                                                     aula: @aula)
     @reserva_esporadica_miercoles = @bedel.reservas_esporadicas.create!(id_docente: '4', nombre_docente: 'Martin', apellido_docente: 'Perez',
-                                                                        correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today)
+                                                                        correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current)
     @renglon_esporadica_miercoles = @reserva_esporadica_miercoles.renglones.create!(fecha: '2024/12/04'.to_date,
                                                                                     horario: '[15:30, 18:00)', aula: @aula)
     @reserva_to_make = {
-      id_bedel: 'bedel', id_docente: '5', nombre_docente: 'Martin', apellido_docente: 'Perez', correo_docente: 'test@test.com', frecuencia: 'anual', tipo_aula: 'regular', curso: 'test', cantidad_alumnos: 15, fecha_solicitud: Date.today, renglones: [{
+      id_bedel: 'bedel', id_docente: '5', nombre_docente: 'Martin', apellido_docente: 'Perez', correo_docente: 'test@test.com', frecuencia: 'anual', tipo_aula: 'regular', curso: 'test', cantidad_alumnos: 15, fecha_solicitud: Date.current, renglones: [{
         id: 0, dia: 'lunes', hora_inicio: '11:30', duracion: '2:00'
       }]
     }
@@ -133,5 +133,8 @@ RSpec.describe 'Disponibilidad', type: :request do
     body = JSON.parse(response.body)
     expect(body['error']).to eq('periodo invalido')
     expect(body['message']).to eq('No será posible realizar una reserva del tipo anual al haber finalizado el primer cuatrimestre.')
+  end
+  scenario 'Should return overlap with reservas esporadicas' do
+    
   end
 end

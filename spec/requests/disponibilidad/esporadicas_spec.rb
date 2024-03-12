@@ -2,7 +2,7 @@ require 'rails_helper'
 # Reservas periodicas
 RSpec.describe 'Esporadicas', type: :request do
   before do
-    Timecop.freeze(Date.today.beginning_of_year + 1.day)
+    Timecop.freeze(Date.parse("2024-04-08"))
     get '/cursos'
     @curso_id = JSON.parse(response.body).first[0]
     get '/docentes'
@@ -18,31 +18,31 @@ RSpec.describe 'Esporadicas', type: :request do
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica, cantidad: 2)
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica_2, cantidad: 1)
     @reserva_pasado = @bedel.reservas_periodicas.create!(id_docente: '1', nombre_docente: 'Juan', apellido_docente: 'Perez', correo_docente: 'test@test.com',
-                                                         id_curso: 1, nombre_curso: 'Curso', año: 2023, cantidad_alumnos: 15, fecha_solicitud: Date.today - 1.year, periodicidad: 'anual')
+                                                         id_curso: 1, nombre_curso: 'Curso', año: 2023, cantidad_alumnos: 15, fecha_solicitud: Date.current - 1.year, periodicidad: 'anual')
     @renglon_pasado = @reserva_pasado.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)', aula: @aula)
 
     @reserva_curso_1 = @bedel.reservas_periodicas.create!(id_docente: '1', nombre_docente: 'Juan', apellido_docente: 'Perez',
-                                                          correo_docente: 'test@test.com', id_curso: 1, nombre_curso: 'Curso', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
+                                                          correo_docente: 'test@test.com', id_curso: 1, nombre_curso: 'Curso', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current, periodicidad: 'anual')
     @renglon_curso_1_lunes = @reserva_curso_1.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)',
                                                                 aula: @aula)
     @renglon_curso_1_martes = @reserva_curso_1.renglones.create!(dia: 'martes', horario: '[10:30, 13:00)',
                                                                  aula: @aula)
     @reserva_curso_2 = @bedel.reservas_periodicas.create!(id_docente: '2', nombre_docente: 'Tomas', apellido_docente: 'Perez',
-                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso2', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
+                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso2', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current, periodicidad: 'anual')
     @renglon_curso_2_martes = @reserva_curso_2.renglones.create!(dia: 'martes', horario: '[15:30, 18:00)',
                                                                  aula: @aula)
     @renglon_curso_2_miercoles = @reserva_curso_2.renglones.create!(dia: 'miercoles', horario: '[15:30, 18:00)',
                                                                     aula: @aula)
     @reserva_curso_3 = @bedel.reservas_periodicas.create!(id_docente: '3', nombre_docente: 'Pepe', apellido_docente: 'Perez',
-                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
+                                                          correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current, periodicidad: 'anual')
     @renglon_curso_3_miercoles = @reserva_curso_3.renglones.create!(dia: 'jueves', horario: '[15:30, 18:00)',
                                                                     aula: @aula)
     @reserva_esporadica_miercoles = @bedel.reservas_esporadicas.create!(id_docente: '4', nombre_docente: 'Martin', apellido_docente: 'Perez',
-                                                                        correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today)
+                                                                        correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.current)
     @renglon_esporadica_miercoles = @reserva_esporadica_miercoles.renglones.create!(fecha: '2024/12/04'.to_date,
                                                                                     horario: '[15:30, 18:00)', aula: @aula)
     @reserva_to_make = {
-      id_bedel: 'bedel', id_docente: '5', nombre_docente: 'Martin', apellido_docente: 'Perez', correo_docente: 'test@test.com', tipo_aula: 'regular', curso: 'test', cantidad_alumnos: 15, fecha_solicitud: Date.today, renglones: [{
+      id_bedel: 'bedel', id_docente: '5', nombre_docente: 'Martin', apellido_docente: 'Perez', correo_docente: 'test@test.com', tipo_aula: 'regular', curso: 'test', cantidad_alumnos: 15, fecha_solicitud: Date.current, renglones: [{
         id: 0, fecha: '', hora_inicio: '11:30', duracion: '2:00'
       }]
     }
@@ -52,7 +52,9 @@ RSpec.describe 'Esporadicas', type: :request do
   end
   scenario 'Should return overlap with reserva periodica on Lunes recursos regulares' do
     # Obtenemos alguna fecha en la cual sea lunes
-    @reserva_to_make[:renglones][0][:fecha] = Date.today.beginning_of_week.strftime('%Y/%m/%d')
+    @reserva_to_make[:renglones][0][:fecha] = Date.current.beginning_of_week.strftime('%Y/%m/%d')
+    print Date.current
+    print @reserva_to_make[:renglones][0][:fecha]
     post disponibilidad_esporadica_url, params: @reserva_to_make
     expect(response).to have_http_status(:conflict)
     expect(response.content_type).to eq('application/json; charset=utf-8')
@@ -74,7 +76,7 @@ RSpec.describe 'Esporadicas', type: :request do
     end
   end
   scenario 'Should return two overlaps with reserva periodica on Martes recursos regulares' do
-    @reserva_to_make[:renglones][0][:fecha] = Date.today.beginning_of_week.next_day.strftime('%Y/%m/%d')
+    @reserva_to_make[:renglones][0][:fecha] = Date.current.beginning_of_week.next_day.strftime('%Y/%m/%d')
     @reserva_to_make[:renglones][0][:hora_inicio] = '12:30'
     @reserva_to_make[:renglones][0][:duracion] = '3:30'
     post disponibilidad_esporadica_url, params: @reserva_to_make
@@ -110,7 +112,7 @@ RSpec.describe 'Esporadicas', type: :request do
     expect(segundo_renglon['correo']).to eq('test@test.com')
   end
   scenario 'Should return valid aula for reserva periodica on Martes recursos regulares in between classes' do
-    @reserva_to_make[:renglones][0][:fecha] = Date.today.beginning_of_week.next_day.strftime('%Y/%m/%d')
+    @reserva_to_make[:renglones][0][:fecha] = Date.current.beginning_of_week.next_day.strftime('%Y/%m/%d')
     @reserva_to_make[:renglones][0][:hora_inicio] = '13:00'
     @reserva_to_make[:renglones][0][:duracion] = '2:30'
     post disponibilidad_esporadica_url, params: @reserva_to_make
@@ -144,12 +146,13 @@ RSpec.describe 'Esporadicas', type: :request do
   end
   scenario 'making the same reservation when only one aula is available should return conflict' do
     @reserva_to_make[:cantidad_alumnos] = 80
-    @reserva_to_make[:renglones][0][:fecha] = Date.today.beginning_of_week.next_day.strftime('%Y/%m/%d')
+    @reserva_to_make[:renglones][0][:fecha] = Date.current.beginning_of_week.next_day.strftime('%Y/%m/%d')
     @reserva_to_make[:tipo_aula] = 'multimedia'
     post disponibilidad_esporadica_url, params: @reserva_to_make
+    body = JSON.parse(response.body)
+    print(body)
     expect(response).to have_http_status(:accepted)
     expect(response.content_type).to eq('application/json; charset=utf-8')
-    body = JSON.parse(response.body)
     # Should return the aula grande
     expect(body['0']).to be_a(Array)
     expect(body['0'].size).to eq(1)
@@ -164,7 +167,7 @@ RSpec.describe 'Esporadicas', type: :request do
       renglones: [
         {
           numero_aula: @aula_grande.numero_aula,
-          fecha: Date.today.beginning_of_week.next_day.strftime('%Y/%m/%d'),
+          fecha: Date.current.beginning_of_week.next_day.strftime('%Y/%m/%d'),
           hora_inicio: '11:30',
           duracion: '2:00'
         }
@@ -175,10 +178,10 @@ RSpec.describe 'Esporadicas', type: :request do
     post disponibilidad_esporadica_url, params: @reserva_to_make
     expect(response).to have_http_status(:conflict)
     expect(response.content_type).to eq('application/json; charset=utf-8')
-    body = JSON.parse(response.body)
+    JSON.parse(response.body)
   end
   scenario 'if date passed is older that current date it return errror' do
-    @reserva_to_make[:renglones][0][:fecha] = Date.today - 1.day
+    @reserva_to_make[:renglones][0][:fecha] = Date.current - 2.day
     post disponibilidad_esporadica_url, params: @reserva_to_make
     expect(response).to have_http_status(:bad_request)
     expect(response.content_type).to eq('application/json; charset=utf-8')

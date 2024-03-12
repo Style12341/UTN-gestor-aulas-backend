@@ -31,17 +31,17 @@ class Periodo < ApplicationRecord
   end
 
   def self.inCuatrimestreUnoActual(date)
-    p = getPeriodo(Date.today.year)
+    p = getPeriodo(Date.current.year)
     p.inicio_cuatrimestre_uno <= date && date <= p.fin_cuatrimestre_uno
   end
 
   def self.inCuatrimestreDosActual(date)
-    p = getPeriodo(Date.today.year)
+    p = getPeriodo(Date.current.year)
     p.inicio_cuatrimestre_dos <= date && date <= p.fin_cuatrimestre_dos
   end
 
   def self.getIntervalo(frecuencia)
-    p = getPeriodo(Date.today.year)
+    p = getPeriodo(Date.current.year)
     case frecuencia
     when :cuatrimestre_1
       p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_uno
@@ -54,12 +54,12 @@ class Periodo < ApplicationRecord
 
 
   def self.final_cuatrimestre_1_actual
-    p = getPeriodo(Date.today.year)
+    p = getPeriodo(Date.current.year)
     p.fin_cuatrimestre_uno
   end
 
   def self.final_cuatrimestre_2_actual
-    p = getPeriodo(Date.today.year)
+    p = getPeriodo(Date.current.year)
     p.fin_cuatrimestre_dos
   end
 
