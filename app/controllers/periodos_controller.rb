@@ -4,7 +4,7 @@ class PeriodosController < ApplicationController
     return render json: { error: 'Año inválido' }, status: :bad_request unless año.positive?
     return render json: { error: 'Año futuro' }, status: :bad_request if año > Time.now.year
 
-    periodo = Periodo.getPeriodo(año)
+    periodo = Periodo.get_periodo_by_year(año)
     if periodo
       render json: periodo
     else
@@ -13,7 +13,7 @@ class PeriodosController < ApplicationController
   end
 
   def current
-    periodo = Periodo.getPeriodo(Time.now.year)
+    periodo = Periodo.get_periodo_by_year(Time.now.year)
     if periodo
       render json: periodo
     else

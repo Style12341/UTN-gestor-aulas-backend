@@ -103,7 +103,7 @@ class AulasController < ApplicationController
     frecuencia = params[:frecuencia]
     return true if frecuencia == 'cuatrimestre_2'
 
-    fin_cuatrimestre_uno = Periodo.final_cuatrimestre_1_actual
+    fin_cuatrimestre_uno = Periodo.final_cuatrimestre_uno_actual
     return true if Time.now <= fin_cuatrimestre_uno
 
     frecuencia = '1er cuatrimestre' if frecuencia == 'cuatrimestre_1'
@@ -129,7 +129,7 @@ class AulasController < ApplicationController
   def fechas_in_periodo?
     params[:renglones].each do |r|
       fecha = r[:fecha].to_date
-      next if Periodo.inCuatrimestreUnoActual(fecha) || Periodo.inCuatrimestreDosActual(fecha)
+      next if Periodo.in_cuatrimestre_uno_actual(fecha) || Periodo.in_cuatrimestre_dos_actual(fecha)
 
       render json: { error: 'fecha invalida', message: 'No será posible realizar una reserva para una fecha fuera de los cuatrimestres.' },
              status: :bad_request
