@@ -1,5 +1,5 @@
 class RenglonReservaPeriodica < ApplicationRecord
-  include FindWithLeastOverlap
+  include LeastOverlapGetter
   validates_presence_of RenglonReservaPeriodica.attribute_names - %w[id]
   enum :dia, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6, domingo: 0
   belongs_to :reserva, class_name: 'ReservaPeriodica', foreign_key: 'reserva_id'
@@ -20,9 +20,9 @@ class RenglonReservaPeriodica < ApplicationRecord
     get_conflictos(ids_aulas, ids_reservas, horario, dia:, fecha:).select(:aula_id).distinct.pluck(:aula_id)
   end
 
-  def self.get_conflictos_with_least_overlap(ids_aulas,ids_reservas,horario,dia: nil, fecha: nil)
-    get_conflictos(ids_aulas, ids_reservas, horario, dia:, fecha:).find_with_least_overlap(range_or_from: horario).to_a.pluck(:overlap, :reserva_id, :aula_id, :horario, :fecha)
+  def self.get_conflictos_with_least_overlap(ids_aulas, ids_reservas, horario, dia: nil, fecha: nil)
+    get_conflictos(ids_aulas, ids_reservas, horario, dia:, fecha:).find_with_least_overlap(range_or_from: horario).to_a.pluck(
+      :overlap, :reserva_id, :aula_id, :horario, :fecha
+    )
   end
-
-
 end

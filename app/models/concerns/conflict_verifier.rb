@@ -1,4 +1,4 @@
-module CheckDisponibilidad
+module ConflictVerifier
   def set_aulas_compatibles_ids(ids)
     @aulas_compatibles_ids = ids
   end

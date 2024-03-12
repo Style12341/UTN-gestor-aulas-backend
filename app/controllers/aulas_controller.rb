@@ -2,7 +2,7 @@ class AulasController < ApplicationController
   include TimeHelper
   attr_accessor :aulas_compatibles_ids
 
-  include CheckDisponibilidad
+  include ConflictVerifier
   # {
   #   frecuencia(opcional): …,
   #   tipo_aula: “regular” o “multimedia” o “informatica”,

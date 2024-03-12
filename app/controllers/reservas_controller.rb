@@ -1,6 +1,6 @@
 class ReservasController < ApplicationController
   include TimeHelper
-  include CheckDisponibilidad
+  include ConflictVerifier
   # POST /reservas/periodica
   # receives array of reservations
   # each reservation has the following fields:
@@ -69,7 +69,8 @@ class ReservasController < ApplicationController
       end
     end
   rescue ActiveRecord::RecordInvalid
-    render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' }, status: :conflict
+    render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
+           status: :conflict
   else
     render json: { message: 'success' }, status: :created
   end

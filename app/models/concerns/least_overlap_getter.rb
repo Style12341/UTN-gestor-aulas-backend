@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module FindWithLeastOverlap
+module LeastOverlapGetter
   extend ActiveSupport::Concern
   included do
     scope :with_least_overlap, lambda { |range_or_from:, to: nil|
@@ -18,8 +18,9 @@ module FindWithLeastOverlap
         .where("least_overlap_timerange('#{timerange}', horario) = interval '#{min_overlap}'")
         .order('overlap ASC')
     end
-    
+
     private
+
     # Converts either a timerange or from/to values into a timerange string
     def convert_to_timerange(range_or_from, to)
       if to.nil?
