@@ -53,8 +53,6 @@ RSpec.describe 'Esporadicas', type: :request do
   scenario 'Should return overlap with reserva periodica on Lunes recursos regulares' do
     # Obtenemos alguna fecha en la cual sea lunes
     @reserva_to_make[:renglones][0][:fecha] = Date.current.beginning_of_week.strftime('%Y/%m/%d')
-    print Date.current
-    print @reserva_to_make[:renglones][0][:fecha]
     post disponibilidad_esporadica_url, params: @reserva_to_make
     expect(response).to have_http_status(:conflict)
     expect(response.content_type).to eq('application/json; charset=utf-8')
@@ -150,7 +148,6 @@ RSpec.describe 'Esporadicas', type: :request do
     @reserva_to_make[:tipo_aula] = 'multimedia'
     post disponibilidad_esporadica_url, params: @reserva_to_make
     body = JSON.parse(response.body)
-    print(body)
     expect(response).to have_http_status(:accepted)
     expect(response.content_type).to eq('application/json; charset=utf-8')
     # Should return the aula grande

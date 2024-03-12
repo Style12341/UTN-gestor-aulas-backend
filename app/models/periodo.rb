@@ -42,12 +42,13 @@ class Periodo < ApplicationRecord
 
   def self.getIntervalo(frecuencia)
     p = getPeriodo(Date.current.year)
-    case frecuencia
-    when :cuatrimestre_1
+    f = frecuencia.to_s
+    case f
+    when "cuatrimestre_1"
       p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_uno
-    when :cuatrimestre_2
+    when "cuatrimestre_2"
       p.inicio_cuatrimestre_dos..p.fin_cuatrimestre_dos
-    when :anual
+    when "anual"
       p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_dos
     end
   end

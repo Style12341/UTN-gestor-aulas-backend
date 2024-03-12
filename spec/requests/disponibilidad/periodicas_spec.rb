@@ -134,7 +134,4 @@ RSpec.describe 'Disponibilidad', type: :request do
     expect(body['error']).to eq('periodo invalido')
     expect(body['message']).to eq('No será posible realizar una reserva del tipo anual al haber finalizado el primer cuatrimestre.')
   end
-  scenario 'Should return overlap with reservas esporadicas' do
-    
-  end
 end
