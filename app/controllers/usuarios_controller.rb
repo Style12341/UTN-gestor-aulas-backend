@@ -1,5 +1,5 @@
 class UsuariosController < ApplicationController
-  def create
+  def login
     user = Usuario.find_by(id: params[:id])
     if user&.authenticate(params[:password])
       if user.type == 'Administrador'
