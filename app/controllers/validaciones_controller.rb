@@ -16,7 +16,7 @@ class ValidacionesController < ApplicationController
   end
 
   # Returns a list of strings specifying each restriction
-  def password
+  def password_validations
     validaciones = []
     validaciones << 'La contraseña debe contener al menos 1 dígito'
     validaciones << 'La contraseña debe contener al menos 1 mayúscula'
