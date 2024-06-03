@@ -7,3 +7,12 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Generate the bedels
+50.times do |_i|
+  nombre = Faker::Name.first_name
+  apellido = Faker::Name.last_name
+  id = "#{nombre[0]}#{apellido[0]}#{rand(1000..9999)}"
+  User.create!(id:, role: :bedel, turno: User.turnos.keys.sample, nombre:,
+               apellido:, password: '12345678')
+end
