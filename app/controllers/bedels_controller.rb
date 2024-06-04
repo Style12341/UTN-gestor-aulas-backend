@@ -59,7 +59,7 @@ class BedelsController < ApplicationController
   def bedel_params
     params[:nombre] = params[:nombre].capitalize if params[:nombre]
     params[:apellido] = params[:apellido].capitalize if params[:apellido]
-    params[:turno] = params[:turno].downcase
+    params[:turno] = params[:turno].downcase if params[:turno]
     params.permit(:id, :turno, :nombre, :apellido, :password)
   end
 end
