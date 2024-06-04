@@ -99,7 +99,7 @@ https://get.enterprisedb.com/postgresql/postgresql-11.2-1-windows-x64.exe
 Pongale cuando pida una contraseña "postgres", asi arranca derecho el repositorio.
 Cuando diga algo de arrancar con stack builder destilden y terminen.
 Una vez instalado (podria variar con la version), verificamos que el servidor este inciado, abrimos pgadmin (buscando desde el buscador de windows), abrimos donde dice servers y si esta con una x, le damos a object y a connect server. La contraseña es postgres.
-##### Volvemos al bash
+**Volvemos al bash**
 Bueno listo, ahora hay que navegar a donde quieran clonar el repositorio.
 Las carpetas de windows estan bajo /mnt/"disco" , por ejemplo para navegar al escritorio seria:
 ```bash
@@ -109,6 +109,20 @@ Estando en la carpeta que quieran finalmente
 ```bash
 git clone https://github.com/Style12341/UTN-gestor-aulas-backend.git
 ```
+Con cualquier editor de codigo abran donde clonaron el repo y en config/database.yml peguen donde esta actualmente
+```yml
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username: postgres
+  password: postgres
+  host: localhost
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+```
+Esto no esta en el repositorio porque lo tengo distinto en mi vm, y si tambien pusieron otro password o ya tenian postgres pueden poner ahi las credenciales.
+### Inicializar servidor
 Instalamos las gemas de ruby (librerias xd)
 ```bash
 bundle install
@@ -127,6 +141,13 @@ rails db:seed
 ```
 Y por ultimo para arrancar el server
 ```bash
+rails s
+```
+### Ante cualquier cambio
+Hay que correr lo siguiente (siempre desde el bash)
+```bash
+rails db:migrate:reset
+rails db:seed
 rails s
 ```
 

@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   enum :role, { bedel: 0, admin: 1 }
-  enum :turno, { todos: 0, manana: 1, tarde: 2, noche: 3 }
+  enum :turno, { todos: 0, mañana: 1, tarde: 2, noche: 3 }
   validates :nombre, presence: true
   validates :apellido, presence: true
 
