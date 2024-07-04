@@ -13,6 +13,6 @@
   nombre = Faker::Name.first_name
   apellido = Faker::Name.last_name
   id = "#{nombre[0]}#{apellido[0]}#{rand(1000..9999)}"
-  User.create!(id:, role: :bedel, turno: User.turnos.keys.sample, nombre:,
+  Bedel.create!(id:, turno: Bedel.turnos.keys.sample, nombre:,
                apellido:, password: '12345678')
 end

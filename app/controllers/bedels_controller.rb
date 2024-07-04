@@ -8,7 +8,7 @@ class BedelsController < ApplicationController
   def index
     # Case insensitive search
 
-    @bedels = User.bedels.where(bedel_params.slice(:turno, :apellido))
+    @bedels = Bedel.where(bedel_params.slice(:turno, :apellido))
     # Only show id, turno, nombre, apellido
     render json: @bedels
   end
@@ -22,7 +22,7 @@ class BedelsController < ApplicationController
 
   # POST /bedels
   def create
-    @bedel = User.new_bedel(bedel_params)
+    @bedel = Bedel.new(bedel_params)
 
     if @bedel.save
       render json: @bedel, status: :created
@@ -51,7 +51,7 @@ class BedelsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_bedel
-    @bedel = User.bedels.find(params[:id])
+    @bedel = Bedel.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
