@@ -52,3 +52,5 @@ gem 'bcrypt', '~> 3.1'
 gem 'active_model_serializers', '~> 0.10.14'
 
 gem "rspec-rails", "~> 6.1"
+
+gem 'addressable', '~> 2.8', '>= 2.8.7'
