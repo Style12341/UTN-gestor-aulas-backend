@@ -1,5 +1,6 @@
 class Administrador < Usuario
-  validates :nombre, presence: false
-  validates :apellido, presence: false
-  validates :turno, presence: false
+  validates :nombre, absence: true
+  validates :apellido, absence: true
+  validates :turno, absence: true
+  validates :deleted_at, absence: true
 end
