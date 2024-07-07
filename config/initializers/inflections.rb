@@ -14,3 +14,15 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+ActiveSupport::Inflector.inflections do |inflect|
+  inflect.irregular 'validacion', 'validaciones'
+  inflect.irregular 'bedel', 'bedeles'
+  inflect.irregular 'usuario', 'usuarios'
+  inflect.irregular 'administrador', 'administradores'
+  inflect.irregular 'reserva_periodica', 'reservas_periodicas'
+  inflect.irregular 'reserva_esporadica', 'reservas_esporadicas'
+  inflect.irregular 'reserva', 'reservas'
+  inflect.irregular 'renglon_reserva_esporadica', 'renglones_reserva_esporadica'
+  inflect.irregular 'renglon_reserva_periodica', 'renglones_reserva_periodica'
+  inflect.irregular 'periodicidad', 'periodicidades'
+end
