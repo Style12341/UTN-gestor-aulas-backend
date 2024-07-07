@@ -143,9 +143,10 @@ Y por ultimo para arrancar el server
 ```bash
 rails s
 ```
-### Ante cualquier cambio
+### Ante cualquier cambio (git pull)
 Hay que correr lo siguiente (siempre desde el bash)
 ```bash
+bundle i
 rails db:migrate:reset
 rails db:seed
 rails s
