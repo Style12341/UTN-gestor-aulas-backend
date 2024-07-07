@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_07_173608) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_07_210347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,6 +21,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_173608) do
     t.integer "capacidad"
     t.integer "tipo_pizarron"
     t.boolean "habilitada"
+  end
+
+  create_table "caracteristicas", force: :cascade do |t|
+    t.string "nombre"
+  end
+
+  create_table "caracteristicas_aula", primary_key: ["caracteristica_id", "aula_id"], force: :cascade do |t|
+    t.integer "cantidad"
+    t.bigint "caracteristica_id", null: false
+    t.bigint "aula_id", null: false
+    t.index ["aula_id"], name: "index_caracteristicas_aula_on_aula_id"
+    t.index ["caracteristica_id"], name: "index_caracteristicas_aula_on_caracteristica_id"
   end
 
   create_table "renglones_reserva_esporadica", force: :cascade do |t|
@@ -68,6 +80,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_173608) do
     t.string "type"
   end
 
+  add_foreign_key "caracteristicas_aula", "aulas"
+  add_foreign_key "caracteristicas_aula", "caracteristicas"
   add_foreign_key "renglones_reserva_esporadica", "aulas"
   add_foreign_key "renglones_reserva_esporadica", "reservas"
   add_foreign_key "renglones_reserva_periodica", "aulas"

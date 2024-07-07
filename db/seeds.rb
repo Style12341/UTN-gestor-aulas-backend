@@ -17,13 +17,26 @@ Administrador.create(id: 'admin', password: 'admin')
   Bedel.create!(id:, turno: Bedel.turnos.keys.sample, nombre:,
                 apellido:, password: '12345678')
 end
+Caracteristica.create!(nombre: 'Cañon')
+Caracteristica.create!(nombre: 'Pizarron digital')
+Caracteristica.create!(nombre: 'Aire acondicionado')
+Caracteristica.create!(nombre: 'Ventilador')
+Caracteristica.create!(nombre: 'Calefaccion')
+Caracteristica.create!(nombre: 'Computadora')
+Caracteristica.create!(nombre: 'Televisor')
+
 5.times do |i|
-  Aula.create!(numero_aula: i + 1, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:sin_recursos],
-               capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
-  Aula.create!(numero_aula: i + 6, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:multimedia],
-               capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
-  Aula.create!(numero_aula: i + 11, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:informatica],
-               capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
+  a1 = Aula.create!(numero_aula: i + 1, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:sin_recursos],
+                    capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
+  a2 = Aula.create!(numero_aula: i + 6, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:multimedia],
+                    capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
+  a3 = Aula.create!(numero_aula: i + 11, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:informatica],
+                    capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
+  3.times do |_j|
+    a1.add_caracteristica(Caracteristica.all.sample, Faker::Number.number(digits: 1))
+    a2.add_caracteristica(Caracteristica.all.sample, Faker::Number.number(digits: 1))
+    a3.add_caracteristica(Caracteristica.all.sample, Faker::Number.number(digits: 1))
+  end
 end
 
 Bedel.first.reservas_esporadicas.create!(id_docente: Faker::IdNumber.brazilian_id, nombre_docente: Faker::Name.first_name,
