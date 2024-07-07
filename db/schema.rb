@@ -10,15 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_07_044236) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_07_173608) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "aulas", force: :cascade do |t|
+    t.integer "numero_aula"
+    t.integer "piso"
+    t.integer "tipo"
+    t.integer "capacidad"
+    t.integer "tipo_pizarron"
+    t.boolean "habilitada"
+  end
 
   create_table "renglones_reserva_esporadica", force: :cascade do |t|
     t.date "fecha"
     t.time "hora_inicio"
     t.time "hora_fin"
     t.bigint "reserva_id"
+    t.bigint "aula_id"
+    t.index ["aula_id"], name: "index_renglones_reserva_esporadica_on_aula_id"
     t.index ["reserva_id"], name: "index_renglones_reserva_esporadica_on_reserva_id"
   end
 
@@ -27,6 +38,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_044236) do
     t.time "hora_inicio"
     t.time "hora_fin"
     t.bigint "reserva_id"
+    t.bigint "aula_id"
+    t.index ["aula_id"], name: "index_renglones_reserva_periodica_on_aula_id"
     t.index ["reserva_id"], name: "index_renglones_reserva_periodica_on_reserva_id"
   end
 
@@ -55,7 +68,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_044236) do
     t.string "type"
   end
 
+  add_foreign_key "renglones_reserva_esporadica", "aulas"
   add_foreign_key "renglones_reserva_esporadica", "reservas"
+  add_foreign_key "renglones_reserva_periodica", "aulas"
   add_foreign_key "renglones_reserva_periodica", "reservas"
   add_foreign_key "reservas", "usuarios", column: "bedel_id"
 end

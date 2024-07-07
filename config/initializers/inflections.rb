@@ -25,4 +25,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'renglon_reserva_esporadica', 'renglones_reserva_esporadica'
   inflect.irregular 'renglon_reserva_periodica', 'renglones_reserva_periodica'
   inflect.irregular 'periodicidad', 'periodicidades'
+  inflect.irregular 'periodo_reservado', 'periodos_reservados'
+  inflect.irregular 'dia_reservado', 'dias_reservados'
+  inflect.irregular 'tipo_pizarron', 'tipos_pizarron'
 end
