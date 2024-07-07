@@ -1,3 +1,3 @@
-class UserSerializer < ActiveModel::Serializer
+class BedelSerializer < ActiveModel::Serializer
   attributes :id, :turno, :nombre, :apellido
 end

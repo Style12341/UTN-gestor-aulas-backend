@@ -1,6 +1,6 @@
-class CreateUsers < ActiveRecord::Migration[7.1]
+class CreateUsuarios < ActiveRecord::Migration[7.1]
   def change
-    create_table :users, id: :string do |t|
+    create_table :usuarios, id: :string do |t|
       t.integer :role , default: 0
       t.integer :turno
       t.string :nombre

@@ -9,10 +9,11 @@
 #   end
 
 # Generate the bedels
+Administrador.create(id: 'admin', password: 'admin')
 50.times do |_i|
   nombre = Faker::Name.first_name
   apellido = Faker::Name.last_name
   id = "#{nombre[0]}#{apellido[0]}#{rand(1000..9999)}"
   Bedel.create!(id:, turno: Bedel.turnos.keys.sample, nombre:,
-               apellido:, password: '12345678')
+                apellido:, password: '12345678')
 end

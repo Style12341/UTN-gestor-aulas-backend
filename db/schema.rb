@@ -14,7 +14,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_04_190930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "users", id: :string, force: :cascade do |t|
+  create_table "usuarios", id: :string, force: :cascade do |t|
     t.integer "turno"
     t.string "nombre"
     t.string "apellido"
