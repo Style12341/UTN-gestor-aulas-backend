@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+class UsuariosController < ApplicationController
 
   def login; end
 
