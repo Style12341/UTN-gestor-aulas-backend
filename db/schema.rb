@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_07_210347) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_16_225313) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,6 +33,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_210347) do
     t.bigint "aula_id", null: false
     t.index ["aula_id"], name: "index_caracteristicas_aula_on_aula_id"
     t.index ["caracteristica_id"], name: "index_caracteristicas_aula_on_caracteristica_id"
+  end
+
+  create_table "periodos", id: false, force: :cascade do |t|
+    t.integer "año", null: false
+    t.date "inicio_cuatrimestre_uno"
+    t.date "fin_cuatrimestre_uno"
+    t.date "inicio_cuatrimestre_dos"
+    t.date "fin_cuatrimestre_dos"
+    t.index ["año"], name: "index_periodos_on_año", unique: true
   end
 
   create_table "renglones_reserva_esporadica", force: :cascade do |t|

@@ -24,7 +24,8 @@ Caracteristica.create!(nombre: 'Ventilador')
 Caracteristica.create!(nombre: 'Calefaccion')
 Caracteristica.create!(nombre: 'Computadora')
 Caracteristica.create!(nombre: 'Televisor')
-
+Periodo.create!(año: 2024, inicio_cuatrimestre_uno: '2024-03-01', fin_cuatrimestre_uno: '2024-07-15',
+                inicio_cuatrimestre_dos: '2024-08-01', fin_cuatrimestre_dos: '2024-12-15')
 5.times do |i|
   a1 = Aula.create!(numero_aula: i + 1, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:sin_recursos],
                     capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
