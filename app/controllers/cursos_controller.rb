@@ -9,7 +9,14 @@ class CursosController < ApplicationController
 
   def index
     # Example action to display the cached courses
-    render json: @@courses
+    if params[:search]
+      # In case of special characters such as í, é, etc., we need to normalize the string
+      # before comparing it with the course names
+      params[:search] = I18n.transliterate(params[:search])
+      render json: @@courses.select { |course| I18n.transliterate(course.downcase).include?(params[:search].downcase) }
+    else
+      render json: @@courses
+    end
   end
 
   private
@@ -37,7 +44,11 @@ class CursosController < ApplicationController
     CSV.foreach(file_path, headers: false) do |row|
       courses << row[0] # Assuming the course name is in the first column
     end
-
+    # Case and accent insensitive sort
+    puts courses
+    courses.map { |course| I18n.transliterate(course).downcase }
+    courses.sort!
+    puts courses
     # Cache the courses in memory
     @@courses = courses
   end
