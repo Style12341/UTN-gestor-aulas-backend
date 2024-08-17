@@ -45,10 +45,9 @@ class CursosController < ApplicationController
       courses << row[0] # Assuming the course name is in the first column
     end
     # Case and accent insensitive sort
-    puts courses
-    courses.map { |course| I18n.transliterate(course).downcase }
-    courses.sort!
-    puts courses
+    courses.sort! do |a, b|
+      I18n.transliterate(a).downcase <=> I18n.transliterate(b).downcase
+    end
     # Cache the courses in memory
     @@courses = courses
   end
