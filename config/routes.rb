@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # Route to get periodo information for a determined año
   get 'periodos/:ano', to: 'periodos#show', as: :periodos
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  post 'login', to: 'usuarios#create'
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
