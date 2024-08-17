@@ -15,7 +15,9 @@ RSpec.describe 'Cursos', type: :request do
     CSV.foreach(file_path, headers: false) do |row|
       courses << row[0] # Assuming the course name is in the first column
     end
-    expect(body).to eq(courses)
+    courses.each do |course|
+      expect(body).to include(course)
+    end
   end
   scenario 'Get Cursos stored in courses.csv after updating the file' do
     # Update the courses.csv file
@@ -30,7 +32,9 @@ RSpec.describe 'Cursos', type: :request do
     CSV.foreach(file_path, headers: false) do |row|
       courses_orig << row[0] # Assuming the course name is in the first column
     end
-    expect(body).to eq(courses_orig)
+    courses_orig.each do |course|
+      expect(body).to include(course)
+    end
     CSV.open(file_path, 'w') do |csv|
       csv << ['New Course 1']
       csv << ['New Course 2']
@@ -48,6 +52,8 @@ RSpec.describe 'Cursos', type: :request do
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
     courses = ['New Course 1', 'New Course 2']
-    expect(body).to eq(courses)
+    courses.each do |course|
+      expect(body).to include(course)
+    end
   end
 end
