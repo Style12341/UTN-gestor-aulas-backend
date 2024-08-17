@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :bedeles
+  resources :cursos , only: [:index]
   # Get current periodo
   get 'periodos/current', to: 'periodos#current'
   # Route to get periodo information for a determined año
