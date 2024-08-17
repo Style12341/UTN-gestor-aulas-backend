@@ -7,7 +7,17 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+# Create public/files/docentes/docentes.csv
+# Create if not exists
 
+File.open(Rails.root.join('public', 'files', 'docentes', 'docentes.csv'), 'w') do |file|
+  file.write("Claudio Bracalenti\n")
+  file.write("Santiago Marneto\n")
+  file.write("Cristian Impini\n")
+  50.times do |_i|
+    file.write("#{Faker::Name.name}\n")
+  end
+end
 # Generate the bedels
 Administrador.create(id: 'admin', password: 'admin')
 50.times do |_i|

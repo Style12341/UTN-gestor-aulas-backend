@@ -1,49 +1,49 @@
 require 'rails_helper'
 
-RSpec.describe 'Cursos', type: :request do
+RSpec.describe 'Docentes', type: :request do
   before do
   end
-  scenario 'Get Cursos stored in courses.csv' do
-    get cursos_url
+  scenario 'Get Docentes stored in docentes.csv' do
+    get docentes_url
     expect(response).to have_http_status(:success)
     expect(response.content_type).to eq('application/json; charset=utf-8')
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    file_path = Rails.root.join('public', 'files', 'courses', 'courses.csv')
-    courses = []
+    file_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
+    docentes = []
     CSV.foreach(file_path, headers: false) do |row|
-      courses << row[0] # Assuming the course name is in the first column
+      docentes << row[0] # Assuming the docente name is in the first column
     end
-    coursescourses_orig.each do |course|
-      expect(body).to include(course)
+    docentes.each do |docente|
+      expect(body).to include(docente)
     end
   end
-  scenario 'Get Cursos stored in courses.csv after updating the file' do
-    # Update the courses.csv file
-    get cursos_url
+  scenario 'Get Docentes stored in docentes.csv after updating the file' do
+    # Update the docentes.csv file
+    get docentes_url
     expect(response).to have_http_status(:success)
     expect(response.content_type).to eq('application/json; charset=utf-8')
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    file_path = Rails.root.join('public', 'files', 'courses', 'courses.csv')
-    courses_orig = []
+    file_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
+    docentes_orig = []
     CSV.foreach(file_path, headers: false) do |row|
-      courses_orig << row[0] # Assuming the course name is in the first column
+      docentes_orig << row[0] # Assuming the docente name is in the first column
     end
-    courses_orig.each do |course|
-      expect(body).to include(course)
+    docentes_orig.each do |docente|
+      expect(body).to include(docente)
     end
     CSV.open(file_path, 'w') do |csv|
-      csv << ['New Course 1']
-      csv << ['New Course 2']
+      csv << ['New docente 1']
+      csv << ['New docente 2']
     end
 
-    get cursos_url
+    get docentes_url
     CSV.open(file_path, 'w') do |csv|
-      for course in courses_orig
-        csv << [course]
+      for docente in docentes_orig
+        csv << [docente]
       end
     end
     expect(response).to have_http_status(:success)
@@ -51,9 +51,10 @@ RSpec.describe 'Cursos', type: :request do
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    courses = ['New Course 1', 'New Course 2']
-    courses.each do |course|
-      expect(body).to include(course)
+    docentes = ['New docente 1', 'New docente 2']
+    #Expect each item to be included in the response as this one is sortes
+    docentes.each do |docente|
+      expect(body).to include(docente)
     end
   end
 end
