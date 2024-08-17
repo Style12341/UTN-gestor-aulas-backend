@@ -41,7 +41,6 @@ class DocentesController < ApplicationController
   def reload_docentes_from_csv(file_path)
     # Reload the docentes from the CSV file and cache them in memory
     docentes = []
-    puts 'reloading'
     CSV.foreach(file_path, headers: false) do |row|
       docentes << row[0] # Assuming the docente name is in the first column
     end
