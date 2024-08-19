@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_17_011457) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_18_232231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -44,25 +44,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_17_011457) do
     t.index ["año"], name: "index_periodos_on_año", unique: true
   end
 
-  create_table "renglones_reserva_esporadica", force: :cascade do |t|
-    t.date "fecha"
-    t.time "hora_inicio"
-    t.time "hora_fin"
-    t.bigint "reserva_id"
-    t.bigint "aula_id"
-    t.index ["aula_id"], name: "index_renglones_reserva_esporadica_on_aula_id"
-    t.index ["reserva_id"], name: "index_renglones_reserva_esporadica_on_reserva_id"
-  end
+# Could not dump table "renglones_reserva_esporadica" because of following StandardError
+#   Unknown type 'timerange' for column 'horario'
 
-  create_table "renglones_reserva_periodica", force: :cascade do |t|
-    t.integer "dia"
-    t.time "hora_inicio"
-    t.time "hora_fin"
-    t.bigint "reserva_id"
-    t.bigint "aula_id"
-    t.index ["aula_id"], name: "index_renglones_reserva_periodica_on_aula_id"
-    t.index ["reserva_id"], name: "index_renglones_reserva_periodica_on_reserva_id"
-  end
+
+# Could not dump table "renglones_reserva_periodica" because of following StandardError
+#   Unknown type 'timerange' for column 'horario'
+
 
   create_table "reservas", force: :cascade do |t|
     t.string "id_docente"

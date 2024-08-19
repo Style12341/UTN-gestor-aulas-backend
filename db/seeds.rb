@@ -52,6 +52,8 @@ Bedel.first.reservas_esporadicas.create!(id_docente: Faker::IdNumber.brazilian_i
                                          apellido_docente: Faker::Name.last_name, correo_docente: Faker::Internet.email, id_curso: Faker::Number.number(digits: 4), nombre_curso: Faker::Educator.course_name, año: 2024, cantidad_alumnos: Faker::Number.number(digits: 2), fecha_solicitud: Faker::Date.between(from: 1.year.ago, to: Date.today))
 Bedel.first.reservas_periodicas.create!(id_docente: Faker::IdNumber.brazilian_id, nombre_docente: Faker::Name.first_name,
                                         apellido_docente: Faker::Name.last_name, correo_docente: Faker::Internet.email, id_curso: Faker::Number.number(digits: 4), nombre_curso: Faker::Educator.course_name, año: 2024, cantidad_alumnos: Faker::Number.number(digits: 2), fecha_solicitud: Faker::Date.between(from: 1.year.ago, to: Date.today), periodicidad: ReservaPeriodica.periodicidades.keys.sample)
+
 ReservaEsporadica.first.renglones.create!(fecha: Faker::Date.between(from: Date.today, to: Date.today + 1.year),
-                                          hora_inicio: '08:00', hora_fin: '10:00', aula: Aula.all.sample)
-ReservaPeriodica.first.renglones.create!(dia: 'lunes', hora_inicio: '08:00', hora_fin: '10:00', aula: Aula.all.sample)
+                                          horario: '[08:00,10:00]', aula: Aula.all.sample)
+
+ReservaPeriodica.first.renglones.create!(dia: 'lunes', horario:'[08:00,10:00]', aula: Aula.all.sample)
