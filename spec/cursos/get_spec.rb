@@ -15,7 +15,7 @@ RSpec.describe 'Cursos', type: :request do
     CSV.foreach(file_path, headers: false) do |row|
       courses << row[0] # Assuming the course name is in the first column
     end
-    coursescourses_orig.each do |course|
+    courses.each do |course|
       expect(body).to include(course)
     end
   end
