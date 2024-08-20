@@ -412,6 +412,13 @@ CREATE INDEX index_renglones_reserva_esporadica_on_aula_id ON public.renglones_r
 
 
 --
+-- Name: index_renglones_reserva_esporadica_on_horario; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_renglones_reserva_esporadica_on_horario ON public.renglones_reserva_esporadica USING gist (horario);
+
+
+--
 -- Name: index_renglones_reserva_esporadica_on_reserva_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -426,10 +433,24 @@ CREATE INDEX index_renglones_reserva_periodica_on_aula_id ON public.renglones_re
 
 
 --
+-- Name: index_renglones_reserva_periodica_on_horario; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_renglones_reserva_periodica_on_horario ON public.renglones_reserva_periodica USING gist (horario);
+
+
+--
 -- Name: index_renglones_reserva_periodica_on_reserva_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_renglones_reserva_periodica_on_reserva_id ON public.renglones_reserva_periodica USING btree (reserva_id);
+
+
+--
+-- Name: index_reservas_on_año_and_periodicidad; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "index_reservas_on_año_and_periodicidad" ON public.reservas USING btree ("año", periodicidad);
 
 
 --
@@ -502,6 +523,8 @@ ALTER TABLE ONLY public.reservas
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240820230315'),
+('20240820171101'),
 ('20240819024915'),
 ('20240818232231'),
 ('20240817011457'),
