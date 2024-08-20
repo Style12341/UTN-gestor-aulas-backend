@@ -4,13 +4,13 @@ class RenglonReservaPeriodica < ApplicationRecord
   belongs_to :reserva, class_name: 'ReservaPeriodica', foreign_key: 'reserva_id'
   belongs_to :aula, class_name: 'Aula', foreign_key: 'aula_id'
   scope :with_least_overlap, lambda { |range_or_from:, to: nil|
-                               find_with_least_overlap(range_or_from:, to:)
-                             }
+    find_with_least_overlap(range_or_from:, to:)
+  }
   def self.find_with_least_overlap(range_or_from:, to: nil)
     timerange = convert_to_timerange(range_or_from, to)
     min_overlap = calculate_min_overlap(timerange)
-    puts min_overlap
-    select("*, least_overlap_timerange('#{timerange}', horario) AS overlap")
+    return nil if min_overlap.nil?
+    select("*, to_char(least_overlap_timerange('#{timerange}', horario), 'HH24:MI') AS overlap")
       .where("least_overlap_timerange('#{timerange}', horario) = interval '#{min_overlap}'")
       .order('overlap ASC')
   end
@@ -27,8 +27,7 @@ class RenglonReservaPeriodica < ApplicationRecord
 
   # Calculates the minimum overlap for a given timerange
   def self.calculate_min_overlap(timerange)
-    select("LEAST(least_overlap_timerange('#{timerange}', horario)) AS min_overlap")
-      .order('min_overlap ASC')
-      .limit(1).take.min_overlap
+    select("to_char(LEAST(least_overlap_timerange('#{timerange}', horario)), 'HH24:MI') AS min_overlap").where('horario && ?', timerange)
+                                                                                    .order('min_overlap ASC').first.min_overlap
   end
 end
