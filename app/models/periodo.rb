@@ -21,12 +21,25 @@ class Periodo < ApplicationRecord
   end
 
   def self.getPeriodoByFecha(date)
+    date = date.to_date unless date.is_a?(Date)
     periodo = getPeriodo(date.year)
     return :cuatrimestre_1 if date.between?(periodo.inicio_cuatrimestre_uno, periodo.fin_cuatrimestre_uno)
 
     return :cuatrimestre_2 if date.between?(periodo.inicio_cuatrimestre_dos, periodo.fin_cuatrimestre_dos)
 
     nil
+  end
+
+  def self.getIntervalo(frecuencia)
+    p = getPeriodo(Date.today.year)
+    case frecuencia
+    when :cuatrimestre_1
+      p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_uno
+    when :cuatrimestre_2
+      p.inicio_cuatrimestre_dos..p.fin_cuatrimestre_uno
+    when :anual
+      p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_dos
+    end
   end
 
   #   def self.getStartOfPeriodoByYearPeriodicidad(año, periodicidad)
