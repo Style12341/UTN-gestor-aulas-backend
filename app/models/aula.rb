@@ -6,9 +6,24 @@ class Aula < ApplicationRecord
   has_many :dias_reservados, class_name: 'RenglonReservaEsporadica', dependent: :destroy, foreign_key: 'aula_id'
   has_many :caracteristicas_aula, dependent: :destroy
   has_many :caracteristicas, through: :caracteristicas_aula
+
+  #   # Returns an array of hashes , each hash will have aula informations and the caracteristicas with their cantidad
+  def self.get_aulas_with_caracteristicas(ids_aulas)
+    ans = Aula.where(id: ids_aulas).order(capacidad: :desc).limit(3).map do |a|
+      { aula: a.numero_aula, piso: a.piso, capacidad: a.capacidad, tipo_pizarron: a.tipo_pizarron.capitalize,
+        caracteristicas: a.caracteristicas_con_cantidad }
+    end
+    return ans unless ans == []
+
+    nil
+  end
+
   # get caracteristicas with their cantidad on caracteristicas_aula
   def caracteristicas_con_cantidad
-    caracteristicas_aula.map { |ca| { caracteristica: ca.caracteristica.nombre, cantidad: ca.cantidad } }
+    # Load all caractristicas
+    caracteristicas_aula.includes(:caracteristica).map do |ca|
+      { nombre: ca.caracteristica.nombre, cantidad: ca.cantidad }
+    end
   end
 
   def add_caracteristica(caracteristica, cantidad)
