@@ -1,6 +1,6 @@
 require 'rails_helper'
 # Reservas periodicas
-RSpec.describe 'Reservas', type: :request do
+RSpec.describe 'Disponibilidad', type: :request do
   before do
     @bedel = Bedel.create!(id: 'bedel', turno: Bedel.turnos.keys.sample, nombre: 'Juan', apellido: 'Perez',
                            password: '123')
@@ -10,6 +10,11 @@ RSpec.describe 'Reservas', type: :request do
     @caracteristica_2 = Caracteristica.create!(nombre: 'Proyector')
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica, cantidad: 2)
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica_2, cantidad: 1)
+    @reserva_pasado = @bedel.reservas_periodicas.create!(id_docente: '1', nombre_docente: 'Juan', apellido_docente: 'Perez', correo_docente: 'test@test.com',
+                                                         id_curso: 1, nombre_curso: 'Curso', año: 2023, cantidad_alumnos: 15, fecha_solicitud: Date.today - 1.year, periodicidad: 'anual')
+    @renglon_pasado = @reserva_pasado.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)', aula: @aula)
+    @renglon_pasado_1 = @reserva_pasado.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)', aula: @aula)
+
     @reserva_curso_1 = @bedel.reservas_periodicas.create!(id_docente: '1', nombre_docente: 'Juan', apellido_docente: 'Perez',
                                                           correo_docente: 'test@test.com', id_curso: 1, nombre_curso: 'Curso', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
     @renglon_curso_1_lunes = @reserva_curso_1.renglones.create!(dia: 'lunes', horario: '[10:30, 13:00)',
@@ -24,11 +29,11 @@ RSpec.describe 'Reservas', type: :request do
                                                                     aula: @aula)
     @reserva_curso_3 = @bedel.reservas_periodicas.create!(id_docente: '3', nombre_docente: 'Pepe', apellido_docente: 'Perez',
                                                           correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today, periodicidad: 'anual')
-    @renglon_curso_3_miercoles = @reserva_curso_3.renglones.create!(dia: 'miercoles', horario: '[15:30, 18:00)',
+    @renglon_curso_3_miercoles = @reserva_curso_3.renglones.create!(dia: 'jueves', horario: '[15:30, 18:00)',
                                                                     aula: @aula)
     @reserva_esporadica_miercoles = @bedel.reservas_esporadicas.create!(id_docente: '4', nombre_docente: 'Martin', apellido_docente: 'Perez',
                                                                         correo_docente: 'test@test.com', id_curso: 2, nombre_curso: 'Curso3', año: 2024, cantidad_alumnos: 15, fecha_solicitud: Date.today)
-    @renglon_esporadica_miercoles = @reserva_esporadica_miercoles.renglones.create!(fecha: '2024/12/07'.to_date,
+    @renglon_esporadica_miercoles = @reserva_esporadica_miercoles.renglones.create!(fecha: '2024/12/04'.to_date,
                                                                                     horario: '[15:30, 18:00)', aula: @aula)
     @reserva_to_make = {
       id_bedel: 'bedel', id_docente: '5', nombre_docente: 'Martin', apellido_docente: 'Perez', correo_docente: 'test@test.com', frecuencia: 'anual', tipo_aula: 'regular', curso: 'test', cantidad_alumnos: 15, fecha_solicitud: Date.today, renglones: [{
@@ -37,14 +42,15 @@ RSpec.describe 'Reservas', type: :request do
     }
   end
   scenario 'Should return overlap with reserva periodica on Lunes recursos regulares' do
-    post reservas_periodica_url, params: @reserva_to_make
+    post disponibilidad_periodica_url, params: @reserva_to_make
     expect(response).to have_http_status(:conflict)
     expect(response.content_type).to eq('application/json; charset=utf-8')
     body = JSON.parse(response.body)
     # Body should contain the error message and data pertinent to show the overlap
-    expect(body['error']).to eq('Algunas reservas no encontraron aulas disponibles')
+    expect(body['error']).to eq('Algunas reservas no encontraron algún aula disponible')
     expect(body['conflictos']).to be_a(Hash)
-    conflicto = body['conflictos'][0]
+    conflicto = body['conflictos']['0']
+    expect(conflicto.size).to eq(1)
     conflicto.each do |obj|
       expect(obj.keys).to contain_exactly('aula', 'fecha', 'horario', 'superposicion', 'docente', 'curso', 'correo')
       expect(obj['aula']).to eq(@aula.numero_aula)
@@ -60,14 +66,17 @@ RSpec.describe 'Reservas', type: :request do
     @reserva_to_make[:renglones][0][:dia] = 'martes'
     @reserva_to_make[:renglones][0][:hora_inicio] = '12:30'
     @reserva_to_make[:renglones][0][:duracion] = '3:30'
-    post reservas_periodica_url, params: @reserva_to_make
+    post disponibilidad_periodica_url, params: @reserva_to_make
     expect(response).to have_http_status(:conflict)
     expect(response.content_type).to eq('application/json; charset=utf-8')
+    # Pretty print json
+    #
     body = JSON.parse(response.body)
     # Body should contain the error message and data pertinent to show the overlap
-    expect(body['error']).to eq('Algunas reservas no encontraron aulas disponibles')
+    expect(body['error']).to eq('Algunas reservas no encontraron algún aula disponible')
     expect(body['conflictos']).to be_a(Hash)
-    conflicto = body['conflictos'][0]
+    conflicto = body['conflictos']['0']
+    expect(conflicto.size).to eq(2)
     primer_renglon = conflicto[0]
     segundo_renglon = conflicto[1]
     expect(primer_renglon.keys).to contain_exactly('aula', 'fecha', 'horario', 'superposicion', 'docente', 'curso',
@@ -93,7 +102,7 @@ RSpec.describe 'Reservas', type: :request do
     @reserva_to_make[:renglones][0][:dia] = 'martes'
     @reserva_to_make[:renglones][0][:hora_inicio] = '13:00'
     @reserva_to_make[:renglones][0][:duracion] = '2:30'
-    post reservas_periodica_url, params: @reserva_to_make
+    post disponibilidad_periodica_url, params: @reserva_to_make
     expect(response).to have_http_status(:accepted)
     expect(response.content_type).to eq('application/json; charset=utf-8')
     body = JSON.parse(response.body)
@@ -103,7 +112,7 @@ RSpec.describe 'Reservas', type: :request do
     expect(body['0'][0]['aula']).to eq(@aula.numero_aula)
     expect(body['0'][0]['piso']).to eq(@aula.piso)
     expect(body['0'][0]['capacidad']).to eq(@aula.capacidad)
-    expect(body['0'][0]['tipo_pizarron']).to eq(@aula.tipo_pizarron)
+    expect(body['0'][0]['tipo_pizarron']).to eq(@aula.tipo_pizarron.capitalize)
     expect(body['0'][0]['caracteristicas']).to be_a(Array)
     expect(body['0'][0]['caracteristicas'].size).to eq(2)
     expect(body['0'][0]['caracteristicas'][0]['nombre']).to eq(@caracteristica.nombre)
