@@ -29,4 +29,5 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'dia_reservado', 'dias_reservados'
   inflect.irregular 'tipo_pizarron', 'tipos_pizarron'
   inflect.irregular 'caracteristica_aula', 'caracteristicas_aula'
+  inflect.irregular 'disponibilidad', 'disponibilidades'
 end
