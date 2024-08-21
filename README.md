@@ -15,8 +15,12 @@ Luego desde powershell (supongo que cmd tambien), clonan el proyecto en algun la
 Eso ultimo es porque windows utiliza otro \n que linux :P.
 
 Si por alguna razon tienen postgres corriendo en su maquina, o otra db escuchando en el puerto 5432, se debe frenar antes de correr cualquier comando del docker, porque viene con una imagen con postgres escuchando en ese puerto.
-
-Luego se ejecuta:
+### Instalacion proyecto
+Clonar repositorio:
+```
+git clone https://github.com/Alexander-Werlen/UTN-gestor-aulas-frontend.git
+```
+Luego se ejecuta dentro del repositorio:
 ```bash
 docker-compose up --build -d
 ```
