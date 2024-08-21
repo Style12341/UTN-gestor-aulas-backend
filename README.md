@@ -7,23 +7,24 @@ Luego ya podemos acceder en un entorno buscando bash en el buscador (no git bash
 
 Ahora se puede correr con docker asi no hay que hacer tanto desastre, de todas maneras hay que tener instalado el wsl.
 ### Instalacion Docker Desktop
-Con este link instalan docker desktop, que tiene el docker engine y compose.
+Con este link instalan docker desktop, que tiene el docker engine y compose.Se siguen los pasos nomas no hay que hacer nada raro
 https://docs.docker.com/desktop/install/windows-install/
-Se siguen los pasos nomas no hay que hacer nada raro
+
 Luego desde powershell (supongo que cmd tambien), clonan el proyecto en algun lado.
-**Hay que crear un archivo .env adentro del proyecto y copiar las variables de entorno que estan en el docs de convenciones backend y frontend esto mejor si lo hacen desde VSCODE, y cambian abajo donde dice CRLF a LF seleccionando todo lo del archivo**
+**Hay que crear un archivo .env adentro del proyecto y copiar las variables de entorno que estan en el docs de convenciones backend y frontend esto mejor si lo hacen desde VSCODE, y cambian abajo donde dice CRLF a LF seleccionando todo lo del archivo**.
 Eso ultimo es porque windows utiliza otro \n que linux :P.
-Luego se ejecuta
+
+Luego se ejecuta:
 ```bash
 docker-compose up --build -d
 ```
 Esto va a correr las dos imagenes, la de rails y la de postgres en el background, para ver los logs del servidor se puede usar directamente la app de docker desktop.
-Para cerrar las imagenes
+Para cerrar las imagenes:
 ```bash
 docker-compose down
 ```
 ### Ante cualquier cambio (git pull)
-Hay que correr lo siguiente (siempre desde el bash)
+Hay que correr lo siguiente desde la carpeta del proyecto:
 ```bash
 docker-compose down
 docker-compose up --build -d
