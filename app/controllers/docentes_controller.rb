@@ -2,18 +2,20 @@ require 'csv'
 
 class DocentesController < ApplicationController
   before_action :check_and_reload_docentes
-
+  attr_accessor :docentes
   # Class variable to store the docentes in memory
   @@docentes = []
   @@last_hash_signature = nil
 
   def index
     # Example action to display the cached docentes
-    if params[:search]
+    check_and_reload_docentes
+    if params[:apellido] || params[:nombre]
       # Normalize the search string before comparing it with the docente names
-      params[:search] = I18n.transliterate(params[:search])
+      params[:apellido] = I18n.transliterate(params[:apellido]) if params[:apellido]
+      params[:nombre] = I18n.transliterate(params[:nombre]) if params[:nombre]
       render json: @@docentes.select { |docente|
-                     I18n.transliterate(docente.downcase).include?(params[:search].downcase)
+                     I18n.transliterate(docente[1].downcase).include?(params[:nombre]&.downcase || '') && I18n.transliterate(docente[2].downcase).include?(params[:apellido]&.downcase || '')
                    }
     else
       render json: @@docentes
@@ -41,12 +43,13 @@ class DocentesController < ApplicationController
   def reload_docentes_from_csv(file_path)
     # Reload the docentes from the CSV file and cache them in memory
     docentes = []
-    CSV.foreach(file_path, headers: false) do |row|
-      docentes << row[0] # Assuming the docente name is in the first column
+    # id,nombre,apellido
+    CSV.foreach(file_path, headers: true) do |row|
+      docentes << [row['id'], row['nombre'], row['apellido']]
     end
     # Case and accent insensitive sort
     docentes.sort! do |a, b|
-      I18n.transliterate(a).downcase <=> I18n.transliterate(b).downcase
+      I18n.transliterate(a[1]).downcase <=> I18n.transliterate(b[1]).downcase && I18n.transliterate(a[2]).downcase <=> I18n.transliterate(b[2]).downcase
     end
 
     # Cache the docentes in memory

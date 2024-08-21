@@ -13,7 +13,7 @@ class CursosController < ApplicationController
       # In case of special characters such as í, é, etc., we need to normalize the string
       # before comparing it with the course names
       params[:search] = I18n.transliterate(params[:search])
-      render json: @@courses.select { |course| I18n.transliterate(course.downcase).include?(params[:search].downcase) }
+      render json: @@courses.select { |course| I18n.transliterate(course[1].downcase).include?(params[:search].downcase) }
     else
       render json: @@courses
     end
@@ -39,14 +39,15 @@ class CursosController < ApplicationController
 
   def reload_courses_from_csv(file_path)
     # Reload the courses from the CSV file and cache them in memory
-    courses = []
 
-    CSV.foreach(file_path, headers: false) do |row|
-      courses << row[0] # Assuming the course name is in the first column
+    # csv id,course
+    courses = []
+    CSV.foreach(file_path, headers: true) do |row|
+      courses << [row['id'], row['course']]
     end
     # Case and accent insensitive sort
     courses.sort! do |a, b|
-      I18n.transliterate(a).downcase <=> I18n.transliterate(b).downcase
+      I18n.transliterate(a[1]).downcase <=> I18n.transliterate(b[1]).downcase
     end
     # Cache the courses in memory
     @@courses = courses

@@ -1,35 +1,36 @@
-Análisis Matemático I
-Álgebra y Geometría Analítica
-Física I
-Ingeniería y Sociedad
-Lógica y Estructuras Discretas
-Algoritmos y Estructuras de Datos
-Arquitectura de Computadoras
-Sistemas y Procesos de Negocio
-Análisis Matemático II
-Física II
-Inglés I
-Probabilidad y Estadística
-Sintaxis y Semántica de los Lenguajes
-Paradigmas de Programación
-Sistemas Operativos
-Análisis de Sistemas de Información
-Inglés II
-Redes de Datos
-Bases de Datos
-Desarrollo de Software
-Comunicación de Datos
-Economía
-Diseño de Sistemas de Información
-Legislación
-Ingeniería y Calidad de Software
-Análisis Numérico
-Investigación operativa
-Simulación
-Tecnologías para la automatización
-Administración de Sistemas de Información
-Ciencia de Datos
-Inteligencia Artificial
-Sistemas de Gestión
-Gestión Gerencial
-Seguridad en los Sistemas de Información
+id,course
+1,Análisis Matemático I
+2,Álgebra y Geometría Analítica
+3,Física I
+4,Ingeniería y Sociedad
+5,Lógica y Estructuras Discretas
+6,Algoritmos y Estructuras de Datos
+7,Arquitectura de Computadoras
+8,Sistemas y Procesos de Negocio
+9,Análisis Matemático II
+10,Física II
+11,Inglés I
+12,Probabilidad y Estadística
+13,Sintaxis y Semántica de los Lenguajes
+14,Paradigmas de Programación
+15,Sistemas Operativos
+16,Análisis de Sistemas de Información
+17,Inglés II
+18,Redes de Datos
+19,Bases de Datos
+20,Desarrollo de Software
+21,Comunicación de Datos
+22,Economía
+23,Diseño de Sistemas de Información
+24,Legislación
+25,Ingeniería y Calidad de Software
+26,Análisis Numérico
+27,Investigación operativa
+28,Simulación
+29,Tecnologías para la automatización
+30,Administración de Sistemas de Información
+31,Ciencia de Datos
+32,Inteligencia Artificial
+33,Sistemas de Gestión
+34,Gestión Gerencial
+35,Seguridad en los Sistemas de Información

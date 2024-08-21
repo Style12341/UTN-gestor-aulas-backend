@@ -11,11 +11,12 @@
 # Create if not exists
 
 File.open(Rails.root.join('public', 'files', 'docentes', 'docentes.csv'), 'w') do |file|
-  file.write("Claudio Bracalenti\n")
-  file.write("Santiago Marneto\n")
-  file.write("Cristian Impini\n")
-  50.times do |_i|
-    file.write("#{Faker::Name.name}\n")
+  file.write("id, nombre, apellido\n")
+  file.write("1,Claudio,Bracalenti\n")
+  file.write("2,Santiago,Marneto\n")
+  file.write("3,Cristian,Impini\n")
+  50.times do |i|
+    file.write("#{i + 4},#{Faker::Name.first_name},#{Faker::Name.last_name}\n")
   end
 end
 # Generate the bedels
@@ -56,4 +57,4 @@ Bedel.first.reservas_periodicas.create!(id_docente: Faker::IdNumber.brazilian_id
 ReservaEsporadica.first.renglones.create!(fecha: Faker::Date.between(from: Date.today, to: Date.today + 1.year),
                                           horario: '[08:00,10:00]', aula: Aula.all.sample)
 
-ReservaPeriodica.first.renglones.create!(dia: 'lunes', horario:'[08:00,10:00]', aula: Aula.all.sample)
+ReservaPeriodica.first.renglones.create!(dia: 'lunes', horario: '[08:00,10:00]', aula: Aula.all.sample)

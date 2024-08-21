@@ -12,8 +12,8 @@ RSpec.describe 'Docentes', type: :request do
     expect(body).to be_an_instance_of(Array)
     file_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
     docentes = []
-    CSV.foreach(file_path, headers: false) do |row|
-      docentes << row[0] # Assuming the docente name is in the first column
+    CSV.foreach(file_path, headers: true) do |row|
+      docentes << [row['id'], row['nombre'], row['apellido']] # Assuming the docente name is in the first column
     end
     docentes.each do |docente|
       expect(body).to include(docente)
@@ -29,21 +29,23 @@ RSpec.describe 'Docentes', type: :request do
     expect(body).to be_an_instance_of(Array)
     file_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
     docentes_orig = []
-    CSV.foreach(file_path, headers: false) do |row|
-      docentes_orig << row[0] # Assuming the docente name is in the first column
+    CSV.foreach(file_path, headers: true) do |row|
+      docentes_orig << [row['id'], row['nombre'], row['apellido']] # Assuming the docente name is in the first column
     end
     docentes_orig.each do |docente|
       expect(body).to include(docente)
     end
     CSV.open(file_path, 'w') do |csv|
-      csv << ['New docente 1']
-      csv << ['New docente 2']
+      csv << %w[id nombre apellido]
+      csv << ['1', 'New', 'docente 1']
+      csv << ['2', 'New', 'docente 2']
     end
 
     get docentes_url
     CSV.open(file_path, 'w') do |csv|
+      csv << %w[id nombre apellido]
       for docente in docentes_orig
-        csv << [docente]
+        csv << docente
       end
     end
     expect(response).to have_http_status(:success)
@@ -51,8 +53,8 @@ RSpec.describe 'Docentes', type: :request do
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    docentes = ['New docente 1', 'New docente 2']
-    #Expect each item to be included in the response as this one is sortes
+    docentes = [['1', 'New', 'docente 1'], ['2', 'New', 'docente 2']]
+    # Expect each item to be included in the response as this one is sortes
     docentes.each do |docente|
       expect(body).to include(docente)
     end
