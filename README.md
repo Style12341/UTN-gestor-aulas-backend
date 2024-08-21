@@ -14,6 +14,8 @@ Luego desde powershell (supongo que cmd tambien), clonan el proyecto en algun la
 **Hay que crear un archivo .env adentro del proyecto y copiar las variables de entorno que estan en el docs de convenciones backend y frontend esto mejor si lo hacen desde VSCODE, y cambian abajo donde dice CRLF a LF seleccionando todo lo del archivo**.
 Eso ultimo es porque windows utiliza otro \n que linux :P.
 
+Si por alguna razon tienen postgres corriendo en su maquina, o otra db escuchando en el puerto 5432, se debe frenar antes de correr cualquier comando del docker, porque viene con una imagen con postgres escuchando en ese puerto.
+
 Luego se ejecuta:
 ```bash
 docker-compose up --build -d
