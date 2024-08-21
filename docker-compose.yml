@@ -15,7 +15,7 @@ services:
     ports:
       - "5432:5432"
   demo-web:
-    build: .
+    image: style12341/gestor-aulas:latest
     command: "./bin/rails server"
     environment:
       - RAILS_ENV=${RAILS_ENV}
