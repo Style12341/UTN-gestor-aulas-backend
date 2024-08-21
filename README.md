@@ -37,10 +37,10 @@ Si salio todo bien les deberia tirar una version.
 
 Comandos para instalar ruby ( tarda un toque )
 ```bash
-rbenv install 3.3.0 --verbose
+rbenv install 3.3.2 --verbose
 ```
 ```bash
-rbenv global 3.3.0
+rbenv global 3.3.2
 ruby -v
 ```
 Si fue todo joya les tira la version de ruby actual.
