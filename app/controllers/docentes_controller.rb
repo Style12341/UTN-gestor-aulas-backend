@@ -2,14 +2,12 @@ require 'csv'
 
 class DocentesController < ApplicationController
   before_action :check_and_reload_docentes
-  attr_accessor :docentes
   # Class variable to store the docentes in memory
   @@docentes = []
   @@last_hash_signature = nil
 
   def index
     # Example action to display the cached docentes
-    check_and_reload_docentes
     if params[:apellido] || params[:nombre]
       # Normalize the search string before comparing it with the docente names
       params[:apellido] = I18n.transliterate(params[:apellido]) if params[:apellido]
@@ -22,7 +20,12 @@ class DocentesController < ApplicationController
     end
   end
 
-  private
+  def self.get_docente_by_id(id)
+    docente = @@docentes.find { |docente| docente[0] == id }
+    return nil if docente.nil?
+
+    { id_docente: docente[0], nombre_docente: docente[1], apellido_docente: docente[2] }
+  end
 
   def check_and_reload_docentes
     csv_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
@@ -34,7 +37,7 @@ class DocentesController < ApplicationController
     @@last_hash_signature = current_hash_signature
     reload_docentes_from_csv(csv_path)
   end
-
+  private
   def calculate_hash_signature(file_path)
     # Calculate the hash of the file contents
     Digest::SHA256.file(file_path).hexdigest

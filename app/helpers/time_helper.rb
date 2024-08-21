@@ -9,6 +9,6 @@ module TimeHelper
 
   def get_time_range_string(hora_inicio, hora_fin)
     # Devuelve un string con el rango de horas en formato "(hh:mm,hh:mm)"
-    "(#{hora_inicio},#{hora_fin})"
+    "[#{hora_inicio},#{hora_fin})"
   end
 end

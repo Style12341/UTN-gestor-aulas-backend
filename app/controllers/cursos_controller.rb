@@ -13,10 +13,20 @@ class CursosController < ApplicationController
       # In case of special characters such as í, é, etc., we need to normalize the string
       # before comparing it with the course names
       params[:search] = I18n.transliterate(params[:search])
-      render json: @@courses.select { |course| I18n.transliterate(course[1].downcase).include?(params[:search].downcase) }
+      render json: @@courses.select { |course|
+                     I18n.transliterate(course[1].downcase).include?(params[:search].downcase)
+                   }
     else
       render json: @@courses
     end
+  end
+
+  def self.get_course_by_id(id)
+    ## Get the course by id and transform it into a hash id[0] and course[1]
+    course = @@courses.find { |course| course[0] == id }
+    return nil if course.nil?
+
+    { id_curso: course[0], nombre_curso: course[1] }
   end
 
   private
