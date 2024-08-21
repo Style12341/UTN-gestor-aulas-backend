@@ -20,7 +20,7 @@ FROM base as build
 # Install packages needed to build gems
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config bash bash-completion libffi-dev tzdata nodejs npm yarn
-
+RUN find . -type f -exec grep -Iq . {} \; -and -exec grep -Il $'\r' {} +
 # Install application gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
