@@ -11,7 +11,7 @@
 # Create if not exists
 
 File.open(Rails.root.join('public', 'files', 'docentes', 'docentes.csv'), 'w') do |file|
-  file.write("id, nombre, apellido\n")
+  file.write("id,nombre,apellido\n")
   file.write("1,Claudio,Bracalenti\n")
   file.write("2,Santiago,Marneto\n")
   file.write("3,Cristian,Impini\n")
