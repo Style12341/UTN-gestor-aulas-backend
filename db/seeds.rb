@@ -10,7 +10,7 @@
 # Create public/files/docentes/docentes.csv
 # Create if not exists
 
-File.open(Rails.root.join('public', 'files', 'docentes', 'docentes.csv'), 'w') do |file|
+File.open(Rails.root.join('public','docentes.csv'), 'w') do |file|
   file.write("id,nombre,apellido\n")
   file.write("1,Claudio,Bracalenti\n")
   file.write("2,Santiago,Marneto\n")

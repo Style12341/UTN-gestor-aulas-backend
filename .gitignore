@@ -35,4 +35,4 @@
 #Ignore docker-build-push.sh
 /docker-build-push.sh
 #Ignore seeded file
-/public/files/docentes/docentes.csv
+/public/docentes.csv
