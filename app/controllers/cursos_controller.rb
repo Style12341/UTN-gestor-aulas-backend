@@ -32,7 +32,7 @@ class CursosController < ApplicationController
   private
 
   def check_and_reload_courses
-    csv_path = Rails.root.join('public', 'files', 'courses', 'courses.csv')
+    csv_path = Rails.root.join('public','courses.csv')
     current_hash_signature = calculate_hash_signature(csv_path)
 
     # If the hash has changed, reload the courses

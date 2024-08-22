@@ -10,7 +10,7 @@ RSpec.describe 'Docentes', type: :request do
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    file_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
+    file_path = Rails.root.join('public', 'docentes.csv')
     docentes = []
     CSV.foreach(file_path, headers: true) do |row|
       docentes << [row['id'], row['nombre'], row['apellido']] # Assuming the docente name is in the first column
@@ -27,7 +27,7 @@ RSpec.describe 'Docentes', type: :request do
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    file_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
+    file_path = Rails.root.join('public', 'docentes.csv')
     docentes_orig = []
     CSV.foreach(file_path, headers: true) do |row|
       docentes_orig << [row['id'], row['nombre'], row['apellido']] # Assuming the docente name is in the first column

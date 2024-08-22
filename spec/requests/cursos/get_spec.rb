@@ -10,7 +10,7 @@ RSpec.describe 'Cursos', type: :request do
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    file_path = Rails.root.join('public', 'files', 'courses', 'courses.csv')
+    file_path = Rails.root.join('public', 'courses.csv')
     courses = []
     CSV.foreach(file_path, headers: true) do |row|
       courses << [row['id'], row['course']]
@@ -27,7 +27,7 @@ RSpec.describe 'Cursos', type: :request do
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    file_path = Rails.root.join('public', 'files', 'courses', 'courses.csv')
+    file_path = Rails.root.join('public', 'courses.csv')
     courses_orig = []
     CSV.foreach(file_path, headers: true) do |row|
       courses_orig << [row['id'], row['course']]
@@ -36,14 +36,14 @@ RSpec.describe 'Cursos', type: :request do
       expect(body).to include(course)
     end
     CSV.open(file_path, 'w') do |csv|
-      csv << ['id','course']
-      csv << ['1','New Course 1']
-      csv << ['2','New Course 2']
+      csv << %w[id course]
+      csv << ['1', 'New Course 1']
+      csv << ['2', 'New Course 2']
     end
 
     get cursos_url
     CSV.open(file_path, 'w') do |csv|
-      csv << ['id','course']
+      csv << %w[id course]
       for course in courses_orig
         csv << [course[0], course[1]]
       end
@@ -53,7 +53,7 @@ RSpec.describe 'Cursos', type: :request do
     # Check if the response contains the expected keys
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of(Array)
-    courses = [['1','New Course 1'], ['2','New Course 2']]
+    courses = [['1', 'New Course 1'], ['2', 'New Course 2']]
     courses.each do |course|
       expect(body).to include(course)
     end

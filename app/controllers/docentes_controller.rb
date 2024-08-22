@@ -28,7 +28,7 @@ class DocentesController < ApplicationController
   end
 
   def check_and_reload_docentes
-    csv_path = Rails.root.join('public', 'files', 'docentes', 'docentes.csv')
+    csv_path = Rails.root.join('public', 'docentes.csv')
     current_hash_signature = calculate_hash_signature(csv_path)
 
     # If the hash has changed, reload the docentes
