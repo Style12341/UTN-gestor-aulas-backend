@@ -16,21 +16,6 @@ Clonar repositorio:
 ```
 git clone https://github.com/Style12341/UTN-gestor-aulas-backend
 ```
-Luego se ejecuta dentro del repositorio:
-```bash
-docker compose up --build -d
-```
-Esto va a correr las dos imagenes, la de rails y la de postgres en el background, para ver los logs del servidor se puede usar directamente la app de docker desktop.
-Para cerrar las imagenes:
-```bash
-docker compose down
-```
-### Ante cualquier cambio (git pull)
-Hay que correr lo siguiente desde la carpeta del proyecto:
-```bash
-docker compose down
-docker compose up --build -d
-```
 ### Se puede correr para desarrollar en backend con 'back-dev', para frontend 'front-dev' y produccion 'prod'.
 Reemplazar perfil por el requerido:
 ```bash
