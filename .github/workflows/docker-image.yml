@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag style12341/gestor-aulas:latest
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: build
+      run: |
+        docker build . -t style12341/gestor-aulas:latest
+    - name: publish
+      run: |
+        docker login -u style12341 -p ${{ secrets.DOCKER_HUB_TOKEN }}
+        docker push style12341/gestor-aulas:latest
