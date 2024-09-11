@@ -10,30 +10,16 @@ Ahora se puede correr con docker asi no hay que hacer tanto desastre, de todas m
 Con este link instalan docker desktop, que tiene el docker engine y compose.Se siguen los pasos nomas no hay que hacer nada raro
 https://docs.docker.com/desktop/install/windows-install/
 
-**En principio ya se arreglo pero por si acaso modifiquen en vscode el line end y ponganlo en \n :**
-![image](https://github.com/user-attachments/assets/f7a4aa26-b90a-4b7c-96c5-325ca7649bf8)
-**Hay que crear un archivo .env adentro del proyecto y copiar las variables de entorno que estan en el docs de convenciones backend y frontend esto mejor si lo hacen desde VSCODE, y cambian abajo donde dice CRLF a LF seleccionando todo lo del archivo**.
-Eso ultimo es porque windows utiliza otro \n que linux :P.
-
 Si por alguna razon tienen postgres corriendo en su maquina, o otra db escuchando en el puerto 5432, se debe frenar antes de correr cualquier comando del docker, porque viene con una imagen con postgres escuchando en ese puerto.
 ### Instalacion proyecto
 Clonar repositorio:
 ```
 git clone https://github.com/Style12341/UTN-gestor-aulas-backend
 ```
-Luego se ejecuta dentro del repositorio:
+### Se puede correr para desarrollar en backend con 'back-dev', para frontend 'front-dev' y produccion 'prod'.
+Reemplazar perfil por el requerido:
 ```bash
-docker-compose up --build -d
-```
-Esto va a correr las dos imagenes, la de rails y la de postgres en el background, para ver los logs del servidor se puede usar directamente la app de docker desktop.
-Para cerrar las imagenes:
-```bash
-docker-compose down
-```
-### Ante cualquier cambio (git pull)
-Hay que correr lo siguiente desde la carpeta del proyecto:
-```bash
-docker-compose down
-docker-compose up --build -d
+docker compose --profile prod pull
+docker compose --profile <perfil> up --remove-orphans
 ```
 

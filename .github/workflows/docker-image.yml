@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: build
+      run: |
+        docker build . -t style12341/gestor-aulas:latest
+    - name: publish
+      run: |
+        docker login -u style12341 -p ${{ secrets.DOCKER_HUB_TOKEN }}
+        docker push style12341/gestor-aulas:latest
