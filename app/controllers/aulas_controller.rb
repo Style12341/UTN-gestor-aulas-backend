@@ -1,4 +1,4 @@
-class DisponibilidadController < ApplicationController
+class AulasController < ApplicationController
   include TimeHelper
   # {
   #   frecuencia(opcional): …,

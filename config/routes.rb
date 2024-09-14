@@ -9,8 +9,8 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   post 'login', to: 'usuarios#create'
   # Reservas routes
-  post 'disponibilidad/periodica', to: 'disponibilidad#periodica'
-  post 'disponibilidad/esporadica', to: 'disponibilidad#esporadica'
+  post 'disponibilidad/periodica', to: 'aulas#periodica'
+  post 'disponibilidad/esporadica', to: 'aulas#esporadica'
   post 'reservas/periodica', to: 'reservas#create_periodica'
   post 'reservas/esporadica', to: 'reservas#create_esporadica'
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
