@@ -97,7 +97,7 @@ RSpec.describe 'Reservas', type: :request do
         }
       ]
     }
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:bad_request)
     expect(JSON.parse(response.body)).to eq('error' => 'Docente o curso no encontrado')
     post '/reservas/periodica', params: {
       bedel_id: @bedel.id,
@@ -121,7 +121,32 @@ RSpec.describe 'Reservas', type: :request do
         }
       ]
     }
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:bad_request)
     expect(JSON.parse(response.body)).to eq('error' => 'Docente o curso no encontrado')
+  end
+  scenario 'admin can create reservas' do
+    post '/reservas/esporadica', params: {
+      bedel_id: @bedel.id,
+      id_docente: @docente_id,
+      id_curso: @curso_id,
+      correo_contacto: 'test@test.com',
+      cantidad_alumnos: 40,
+      renglones: [
+        {
+          numero_aula: @aula.numero_aula,
+          fecha: '2021-01-01',
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        },
+        {
+          numero_aula: @aula.numero_aula,
+          fecha: '2021-01-02',
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        }
+      ]
+    }
+    expect(response).to have_http_status(:created)
+    expect(JSON.parse(response.body)).to eq('message' => 'success')
   end
 end
