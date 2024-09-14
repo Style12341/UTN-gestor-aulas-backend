@@ -121,4 +121,15 @@ RSpec.describe 'Esporadicas', type: :request do
     expect(body['0'][0]['caracteristicas'][1]['nombre']).to eq(@caracteristica_2.nombre)
     expect(body['0'][0]['caracteristicas'][1]['cantidad']).to eq(1)
   end
+  scenario 'disponibilidad no deberia permitir hora_fin < hora_inicio a las 2' do
+    @reserva_to_make[:renglones][0][:hora_inicio] = '22:00'
+    @reserva_to_make[:renglones][0][:duracion] = '2:30'
+    post disponibilidad_esporadica_url, params: @reserva_to_make
+    expect(response).to have_http_status(:bad_request)
+    expect(response.content_type).to eq('application/json; charset=utf-8')
+    body = JSON.parse(response.body)
+    expect(body['error']).to eq('Existen horarios invalidos')
+    expect(body['conflictos']).to be_a(Array)
+    expect(body['conflictos'][0]).to eq('0')
+  end
 end

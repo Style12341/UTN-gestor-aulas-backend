@@ -14,6 +14,8 @@ class AulasController < ApplicationController
   #     …
   #   ]
   # }
+  before_action :horario_invalido? , only: [:periodica, :esporadica]
+
   def periodica
     # Obtencion de aulas que esten dentro del criterio de tipo_aula y capacidad >= cantidad_alumnos
 
@@ -163,5 +165,19 @@ class AulasController < ApplicationController
     # Get elements from aulas_compatibles_ids that are not in conflicto_ids_aulas given that both are arrays
     aulas_libres_ids = aulas_compatibles_ids - conflicto_ids_aulas
     Aula.get_aulas_with_caracteristicas(aulas_libres_ids)
+  end
+  def horario_invalido?()
+    #Para cada renglon verificar si es un horario valido
+    ans = []
+    params[:renglones].each do |r|
+      hora_inicio = r[:hora_inicio]
+      duracion = r[:duracion]
+      unless hora_fin_after_inicio(hora_inicio, get_hora_fin(hora_inicio, duracion))
+        ans.push(r[:id])
+      end
+    end
+    return true if ans.empty?
+    render json: { error: 'Existen horarios invalidos', conflictos: ans }, status: :bad_request
+    return false;
   end
 end

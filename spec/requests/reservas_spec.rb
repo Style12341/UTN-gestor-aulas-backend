@@ -126,7 +126,7 @@ RSpec.describe 'Reservas', type: :request do
   end
   scenario 'admin can create reservas' do
     post '/reservas/esporadica', params: {
-      bedel_id: @bedel.id,
+      bedel_id: 'admin',
       id_docente: @docente_id,
       id_curso: @curso_id,
       correo_contacto: 'test@test.com',

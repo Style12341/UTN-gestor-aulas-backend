@@ -21,9 +21,7 @@ class BedelesController < ApplicationController
 
   # POST /bedels
   def create
-    @bedel = Bedel.new(bedel_params)
-
-    if @bedel.save
+    if @bedel = Bedel.create(bedel_params)
       render json: @bedel, status: :created
     else
       render json: @bedel.errors, status: :unprocessable_entity
