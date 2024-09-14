@@ -14,7 +14,7 @@ class AulasController < ApplicationController
   #     …
   #   ]
   # }
-  before_action :horario_invalido? , only: [:periodica, :esporadica]
+  before_action :horario_invalido?, only: %i[periodica esporadica]
 
   def periodica
     # Obtencion de aulas que esten dentro del criterio de tipo_aula y capacidad >= cantidad_alumnos
@@ -112,7 +112,7 @@ class AulasController < ApplicationController
     elsif overlap_periodos
       conflictos = least_conflicto_periodos
     end
-    conflictos = conflictos.map do |overlap, reserva_id, aula_id, horario, fecha|
+    conflictos.map do |overlap, reserva_id, aula_id, horario, fecha|
       reserva = Reserva.find(reserva_id)
       aula = Aula.find(aula_id)
       {
@@ -137,7 +137,7 @@ class AulasController < ApplicationController
     # Se obtiene un intervalo de fechas para la frecuencia dada, para no tener renglones fuera de la frecuencia dada
     # ex, si la frecuencia es cuatrimestral_2 solo deberia haber renglones dentro del intervalo anual y del cuatrimestre 2
     if dia && frecuencia
-      inicio, final = Periodo.getIntervalo(frecuencia)
+      _, final = Periodo.getIntervalo(frecuencia)
       inicio = Time.now
       # Si se pasa el dia se busca por dia,extrae que dia es de la fecha
       rel = rel.where("DATE_PART('dow', fecha) = :dia", dia:).where('fecha BETWEEN :inicio AND :final', inicio:,
@@ -166,18 +166,18 @@ class AulasController < ApplicationController
     aulas_libres_ids = aulas_compatibles_ids - conflicto_ids_aulas
     Aula.get_aulas_with_caracteristicas(aulas_libres_ids)
   end
-  def horario_invalido?()
-    #Para cada renglon verificar si es un horario valido
+
+  def horario_invalido?
+    # Para cada renglon verificar si es un horario valido
     ans = []
     params[:renglones].each do |r|
       hora_inicio = r[:hora_inicio]
       duracion = r[:duracion]
-      unless hora_fin_after_inicio(hora_inicio, get_hora_fin(hora_inicio, duracion))
-        ans.push(r[:id])
-      end
+      ans.push(r[:id]) unless hora_fin_after_inicio(hora_inicio, get_hora_fin(hora_inicio, duracion))
     end
     return true if ans.empty?
+
     render json: { error: 'Existen horarios invalidos', conflictos: ans }, status: :bad_request
-    return false;
+    false
   end
 end

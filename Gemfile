@@ -54,3 +54,8 @@ gem 'active_model_serializers', '~> 0.10.14'
 gem "rspec-rails", "~> 6.1"
 
 gem 'addressable', '~> 2.8', '>= 2.8.7'
+
+gem "ruby-lsp", "~> 0.17.17"
+
+gem 'sorbet', :group => :development
+gem 'sorbet-runtime'
