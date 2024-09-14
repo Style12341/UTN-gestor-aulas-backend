@@ -18,7 +18,7 @@ class ReservasController < ApplicationController
     docente = DocentesController.get_docente_by_id(params[:id_docente])
     curso = CursosController.get_course_by_id(params[:id_curso])
     if docente.nil? || curso.nil?
-      render json: { error: 'Docente o curso no encontrado' }, status: :not_found
+      render json: { error: 'Docente o curso no encontrado' }, status: :no_content
       return
     end
     reserva_params = { correo_docente: params[:correo_contacto], año: Time.now.year, cantidad_alumnos: params[:cantidad_alumnos], fecha_solicitud: Time.now,
@@ -40,7 +40,7 @@ class ReservasController < ApplicationController
     docente = DocentesController.get_docente_by_id(params[:id_docente])
     curso = CursosController.get_course_by_id(params[:id_curso])
     if docente.nil? || curso.nil?
-      render json: { error: 'Docente o curso no encontrado' }, status: :not_found
+      render json: { error: 'Docente o curso no encontrado' }, status: :no_content
       return
     end
     reserva_params = { correo_docente: params[:correo_contacto], año: Time.now.year, cantidad_alumnos: params[:cantidad_alumnos], fecha_solicitud: Time.now,
