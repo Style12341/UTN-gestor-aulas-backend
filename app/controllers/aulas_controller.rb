@@ -107,7 +107,7 @@ class AulasController < ApplicationController
     # Overlap is given in "HH:MM" format
     if overlap_dias == overlap_periodos
       conflictos = least_conflicto_dias + least_conflicto_periodos
-    elsif overlap_dias && overlap_dias < overlap_periodos
+    elsif !overlap_periodos || (overlap_dias && overlap_dias < overlap_periodos)
       conflictos = least_conflicto_dias
     elsif overlap_periodos
       conflictos = least_conflicto_periodos

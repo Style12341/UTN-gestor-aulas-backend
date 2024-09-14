@@ -28,6 +28,6 @@ class RenglonReservaPeriodica < ApplicationRecord
   # Calculates the minimum overlap for a given timerange
   def self.calculate_min_overlap(timerange)
     select("to_char(LEAST(least_overlap_timerange('#{timerange}', horario)), 'HH24:MI') AS min_overlap").where('horario && ?', timerange)
-                                                                                    .order('min_overlap ASC').first.min_overlap
+                                                                                    .order('min_overlap ASC').first&.min_overlap
   end
 end

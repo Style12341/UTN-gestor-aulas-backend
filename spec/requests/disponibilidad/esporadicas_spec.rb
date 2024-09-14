@@ -2,10 +2,15 @@ require 'rails_helper'
 # Reservas periodicas
 RSpec.describe 'Esporadicas', type: :request do
   before do
+    get '/cursos'
+    @curso_id = JSON.parse(response.body).first[0]
+    get '/docentes'
+    @docente_id = JSON.parse(response.body).first[0]
     @bedel = Bedel.create!(id: 'bedel', turno: Bedel.turnos.keys.sample, nombre: 'Juan', apellido: 'Perez',
                            password: '123')
     @aula = Aula.create!(id: 1, piso: 1, numero_aula: 10, capacidad: 15, tipo: 'regular', tipo_pizarron: 'tiza',
                          habilitada: true)
+    @aula_grande = Aula.create(id: 2, piso: 1, numero_aula: 11, capacidad: 80, tipo: 'multimedia', tipo_pizarron: 'tiza', habilitada: true)
     @caracteristica = Caracteristica.create!(nombre: 'Aire Acondicionado')
     @caracteristica_2 = Caracteristica.create!(nombre: 'Proyector')
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica, cantidad: 2)
@@ -132,4 +137,40 @@ RSpec.describe 'Esporadicas', type: :request do
     expect(body['conflictos']).to be_a(Array)
     expect(body['conflictos'][0]).to eq('0')
   end
+  scenario 'making the same reservation when only one aula is available should return conflict' do
+    @reserva_to_make[:cantidad_alumnos] = 80
+    @reserva_to_make[:renglones][0][:fecha] = Date.today.beginning_of_week.next_day.strftime('%Y/%m/%d')
+    @reserva_to_make[:tipo_aula] = 'multimedia'
+    post disponibilidad_esporadica_url, params: @reserva_to_make
+    expect(response).to have_http_status(:accepted)
+    expect(response.content_type).to eq('application/json; charset=utf-8')
+    body = JSON.parse(response.body)
+    # Should return the aula grande
+    expect(body['0']).to be_a(Array)
+    expect(body['0'].size).to eq(1)
+    expect(body['0'][0]['aula']).to eq(@aula_grande.numero_aula)
+    #Make the reserva
+    post '/reservas/esporadica', params: {
+      bedel_id: 'admin',
+      id_docente: @docente_id,
+      id_curso: @curso_id,
+      correo_contacto: 'test@test.com',
+      cantidad_alumnos: 80,
+      renglones: [
+        {
+          numero_aula: @aula_grande.numero_aula,
+          fecha: Date.today.beginning_of_week.next_day.strftime('%Y/%m/%d'),
+          hora_inicio: '11:30',
+          duracion: '2:00'
+        }
+      ]
+    }
+    expect(response).to have_http_status(:created)
+    # Try to make the same reservation
+    post disponibilidad_esporadica_url, params: @reserva_to_make
+    expect(response).to have_http_status(:conflict)
+    expect(response.content_type).to eq('application/json; charset=utf-8')
+    body = JSON.parse(response.body)
+  end
+
 end
