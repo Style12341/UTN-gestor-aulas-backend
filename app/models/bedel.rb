@@ -6,4 +6,10 @@ class Bedel < Usuario
   has_many :reservas, class_name: 'Reserva', dependent: :destroy, foreign_key: 'bedel_id'
   has_many :reservas_periodicas, class_name: 'ReservaPeriodica', dependent: :destroy, foreign_key: 'bedel_id'
   has_many :reservas_esporadicas, class_name: 'ReservaEsporadica', dependent: :destroy, foreign_key: 'bedel_id'
+
+  def self.filter_by_turno_apellido(turno, apellido)
+    turno = Bedel.turnos.keys if turno.blank?
+    apellido = '' if apellido.blank?
+    where(turno:).where('apellido ILIKE ?', "#{apellido}%")
+  end
 end
