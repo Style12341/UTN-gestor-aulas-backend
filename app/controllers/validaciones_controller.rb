@@ -20,7 +20,7 @@ class ValidacionesController < ApplicationController
     validaciones = []
     validaciones << 'La contraseña debe contener al menos 1 dígito'
     validaciones << 'La contraseña debe contener al menos 1 mayúscula'
-    validaciones << "La contraseña debe contener al menos 1 caracter especial(@\#$%&*)"
+    validaciones << "La contraseña debe contener al menos 1 caracter especial(@#$%&*)"
     validaciones << 'La contraseña debe tener por lo menos 8 caracteres'
     render json: validaciones
   end
