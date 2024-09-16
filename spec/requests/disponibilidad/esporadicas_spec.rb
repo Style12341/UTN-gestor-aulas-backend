@@ -7,7 +7,7 @@ RSpec.describe 'Esporadicas', type: :request do
     get '/docentes'
     @docente_id = JSON.parse(response.body).first[0]
     @bedel = Bedel.create!(id: 'bedel', turno: Bedel.turnos.keys.sample, nombre: 'Juan', apellido: 'Perez',
-                           password: '123')
+                           password: '12&A45678')
     @aula = Aula.create!(id: 1, piso: 1, numero_aula: 10, capacidad: 15, tipo: 'regular', tipo_pizarron: 'tiza',
                          habilitada: true)
     @aula_grande = Aula.create(id: 2, piso: 1, numero_aula: 11, capacidad: 80, tipo: 'multimedia', tipo_pizarron: 'tiza', habilitada: true)

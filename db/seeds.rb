@@ -26,7 +26,7 @@ Administrador.create(id: 'admin', password: 'admin')
   apellido = Faker::Name.last_name
   id = "#{nombre[0]}#{apellido[0]}#{rand(1000..9999)}"
   Bedel.create!(id:, turno: Bedel.turnos.keys.sample, nombre:,
-                apellido:, password: '12345678')
+                apellido:, password: '12&A45678')
 end
 Caracteristica.create!(nombre: 'Cañon')
 Caracteristica.create!(nombre: 'Pizarron digital')

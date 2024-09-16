@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Disponibilidad', type: :request do
   before do
     @bedel = Bedel.create!(id: 'bedel', turno: Bedel.turnos.keys.sample, nombre: 'Juan', apellido: 'Perez',
-                           password: '123')
+                           password: '12&A45678')
     @aula = Aula.create!(id: 1, piso: 1, numero_aula: 10, capacidad: 15, tipo: 'regular', tipo_pizarron: 'tiza',
                          habilitada: true)
     @caracteristica = Caracteristica.create!(nombre: 'Aire Acondicionado')

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Reservas', type: :request do
   before do
-    @bedel = Bedel.create!(id: 'test', turno: :mañana, password: 'test', nombre: 'test', apellido: 'test')
+    @bedel = Bedel.create!(id: 'test', turno: :mañana, password: '12&A45678', nombre: 'test', apellido: 'test')
     @aula = Aula.create!(numero_aula: 1, capacidad: 40, piso: 1, tipo_pizarron: :tiza, habilitada: true, tipo: :regular)
     get '/cursos'
     @curso_id = JSON.parse(response.body).first[0]

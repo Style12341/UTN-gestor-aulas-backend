@@ -25,7 +25,7 @@ class BedelesController < ApplicationController
     if @bedel.save
       render json: @bedel, status: :created
     else
-      render json: @bedel.errors, status: :unprocessable_entity
+      render json: { error: @bedel.errors[:errors] }, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotUnique
     render json: { error: 'Identificador Repetido' }, status: :unprocessable_entity
