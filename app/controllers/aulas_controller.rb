@@ -14,8 +14,9 @@ class AulasController < ApplicationController
   #     …
   #   ]
   # }
-  before_action :horario_invalido?, only: %i[periodica esporadica]
-
+  before_action :horario_valido?, only: %i[periodica esporadica]
+  before_action :periodo_valido?, only: %i[periodica]
+  before_action :fecha_valida?, only: %i[esporadica]
   def periodica
     # Obtencion de aulas que esten dentro del criterio de tipo_aula y capacidad >= cantidad_alumnos
 
@@ -167,7 +168,7 @@ class AulasController < ApplicationController
     Aula.get_aulas_with_caracteristicas(aulas_libres_ids)
   end
 
-  def horario_invalido?
+  def horario_valido?
     # Para cada renglon verificar si es un horario valido
     ans = []
     params[:renglones].each do |r|
@@ -179,5 +180,31 @@ class AulasController < ApplicationController
 
     render json: { error: 'Existen horarios invalidos', conflictos: ans }, status: :bad_request
     false
+  end
+
+  # Si la fecha actual es posterior a la de finalizacion del cuatrimestre actual se considera invalido
+  def periodo_valido?
+    frecuencia = params[:frecuencia]
+    return true if frecuencia == 'cuatrimestre_2'
+
+    fin_cuatrimestre_uno = Periodo.final_cuatrimestre_1_actual
+    return true if Time.now <= fin_cuatrimestre_uno
+
+    render json: { error: 'periodo invalido', message: "No será posible realizar una reserva del tipo #{frecuencia} al haber finalizado el primer cuatrimestre." },
+           status: :bad_request
+    false
+  end
+
+  # Fecha recibida es mayor o igual a la actual
+  def fecha_valida?
+    params[:renglones].each do |r|
+      fecha = r[:fecha]
+      next unless fecha.to_date < Time.now.to_date
+
+      render json: { error: 'fecha invalida', message: 'No será posible realizar una reserva para una fecha anterior a la actual.' },
+             status: :bad_request
+      return false
+    end
+    true
   end
 end

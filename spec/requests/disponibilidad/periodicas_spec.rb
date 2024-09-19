@@ -2,6 +2,8 @@ require 'rails_helper'
 # Reservas periodicas
 RSpec.describe 'Disponibilidad', type: :request do
   before do
+    # Go to beginning of year
+    Timecop.freeze(Date.today.beginning_of_year + 1.day)
     @bedel = Bedel.create!(id: 'bedel', turno: Bedel.turnos.keys.sample, nombre: 'Juan', apellido: 'Perez',
                            password: '12&A45678')
     @aula = Aula.create!(id: 1, piso: 1, numero_aula: 10, capacidad: 15, tipo: 'regular', tipo_pizarron: 'tiza',
@@ -40,6 +42,9 @@ RSpec.describe 'Disponibilidad', type: :request do
         id: 0, dia: 'lunes', hora_inicio: '11:30', duracion: '2:00'
       }]
     }
+  end
+  after do
+    Timecop.return
   end
   scenario 'Should return overlap with reserva periodica on Lunes recursos regulares' do
     post disponibilidad_periodica_url, params: @reserva_to_make
@@ -119,5 +124,14 @@ RSpec.describe 'Disponibilidad', type: :request do
     expect(body['0'][0]['caracteristicas'][0]['cantidad']).to eq(2)
     expect(body['0'][0]['caracteristicas'][1]['nombre']).to eq(@caracteristica_2.nombre)
     expect(body['0'][0]['caracteristicas'][1]['cantidad']).to eq(1)
+  end
+  scenario 'If server date is after 1er_cuatrimestre end date, should return error' do
+    Timecop.travel(Periodo.final_cuatrimestre_1_actual + 1.day)
+    post disponibilidad_periodica_url, params: @reserva_to_make
+    expect(response).to have_http_status(:bad_request)
+    expect(response.content_type).to eq('application/json; charset=utf-8')
+    body = JSON.parse(response.body)
+    expect(body['error']).to eq('periodo invalido')
+    expect(body['message']).to eq('No será posible realizar una reserva del tipo anual al haber finalizado el primer cuatrimestre.')
   end
 end

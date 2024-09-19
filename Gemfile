@@ -59,3 +59,4 @@ gem "ruby-lsp", "~> 0.17.17"
 
 gem 'sorbet', :group => :development
 gem 'sorbet-runtime'
+gem "timecop", "~> 0.9.10"

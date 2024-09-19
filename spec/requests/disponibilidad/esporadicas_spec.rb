@@ -2,6 +2,7 @@ require 'rails_helper'
 # Reservas periodicas
 RSpec.describe 'Esporadicas', type: :request do
   before do
+    Timecop.freeze(Date.today.beginning_of_year + 1.day)
     get '/cursos'
     @curso_id = JSON.parse(response.body).first[0]
     get '/docentes'
@@ -10,7 +11,8 @@ RSpec.describe 'Esporadicas', type: :request do
                            password: '12&A45678')
     @aula = Aula.create!(id: 1, piso: 1, numero_aula: 10, capacidad: 15, tipo: 'regular', tipo_pizarron: 'tiza',
                          habilitada: true)
-    @aula_grande = Aula.create(id: 2, piso: 1, numero_aula: 11, capacidad: 80, tipo: 'multimedia', tipo_pizarron: 'tiza', habilitada: true)
+    @aula_grande = Aula.create(id: 2, piso: 1, numero_aula: 11, capacidad: 80, tipo: 'multimedia',
+                               tipo_pizarron: 'tiza', habilitada: true)
     @caracteristica = Caracteristica.create!(nombre: 'Aire Acondicionado')
     @caracteristica_2 = Caracteristica.create!(nombre: 'Proyector')
     CaracteristicaAula.create!(aula: @aula, caracteristica: @caracteristica, cantidad: 2)
@@ -44,6 +46,9 @@ RSpec.describe 'Esporadicas', type: :request do
         id: 0, fecha: '', hora_inicio: '11:30', duracion: '2:00'
       }]
     }
+  end
+  after do
+    Timecop.return
   end
   scenario 'Should return overlap with reserva periodica on Lunes recursos regulares' do
     # Obtenemos alguna fecha en la cual sea lunes
@@ -149,7 +154,7 @@ RSpec.describe 'Esporadicas', type: :request do
     expect(body['0']).to be_a(Array)
     expect(body['0'].size).to eq(1)
     expect(body['0'][0]['aula']).to eq(@aula_grande.numero_aula)
-    #Make the reserva
+    # Make the reserva
     post '/reservas/esporadica', params: {
       bedel_id: 'admin',
       id_docente: @docente_id,
@@ -172,5 +177,13 @@ RSpec.describe 'Esporadicas', type: :request do
     expect(response.content_type).to eq('application/json; charset=utf-8')
     body = JSON.parse(response.body)
   end
-
+  scenario 'if date passed is older that current date it return errror' do
+    @reserva_to_make[:renglones][0][:fecha] = Date.today - 1.day
+    post disponibilidad_esporadica_url, params: @reserva_to_make
+    expect(response).to have_http_status(:bad_request)
+    expect(response.content_type).to eq('application/json; charset=utf-8')
+    body = JSON.parse(response.body)
+    expect(body['error']).to eq('fecha invalida')
+    expect(body['message']).to eq('No será posible realizar una reserva para una fecha anterior a la actual.')
+  end
 end

@@ -42,21 +42,15 @@ class Periodo < ApplicationRecord
     end
   end
 
-  #   def self.getStartOfPeriodoByYearPeriodicidad(año, periodicidad)
-  #     periodo = getPeriodo(año)
-  #
-  #     return periodo.inicio_cuatrimestre_uno if periodicidad == :cuatrimestre_1
-  #
-  #     periodo.inicio_cuatrimestre_dos if periodicidad == :cuatrimestre_2
-  #   end
-  #
-  #   def self.getStartOfPeriodByFecha(date)
-  #     periodo = getPeriodoByFecha(date)
-  #
-  #     return periodo.inicio_cuatrimestre_uno if periodo == :cuatrimestre_1
-  #
-  #     periodo.inicio_cuatrimestre_dos if periodo == :cuatrimestre_2
-  #   end
+  def self.final_cuatrimestre_1_actual
+    p = getPeriodo(Date.today.year)
+    p.fin_cuatrimestre_uno
+  end
+
+  def self.final_cuatrimestre_2_actual
+    p = getPeriodo(Date.today.year)
+    p.fin_cuatrimestre_dos
+  end
 
   private
 
