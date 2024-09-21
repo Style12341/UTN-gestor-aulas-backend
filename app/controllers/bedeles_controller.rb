@@ -43,7 +43,7 @@ class BedelesController < ApplicationController
 
   # DELETE /bedels/id
   def destroy
-    @bedel.destroy!
+    @bedel.soft_delete
   end
 
   private
