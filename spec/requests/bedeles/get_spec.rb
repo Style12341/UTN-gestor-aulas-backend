@@ -7,14 +7,14 @@ RSpec.describe 'Bedeles', type: :request do
       apellido = "test_apellido_#{i}"
       id = "#{nombre[0]}#{apellido[0]}#{i}"
       Bedel.create!(id:, turno: Bedel.turnos.keys[i], nombre:,
-                    apellido:, password: '12345678')
+                    apellido:, password: '12&A45678')
     end
     4.times do |i|
       nombre = "prueba_nombre_#{i}"
       apellido = "prueba_apellido_#{i}"
       id = "#{nombre[0]}#{apellido[0]}#{i}"
       Bedel.create!(id:, turno: Bedel.turnos.keys[i], nombre:,
-                    apellido:, password: '12345678')
+                    apellido:, password: '12&A45678')
     end
   end
 

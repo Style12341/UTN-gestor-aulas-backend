@@ -7,7 +7,7 @@ class BedelesController < ApplicationController
   # The bedels will be filtered by the turno and/or apellido
   def index
     # Case insensitive search
-    @bedels = Bedel.where(bedel_params.slice(:turno)).where('apellido ILIKE ?', "#{bedel_params[:apellido]}%")
+    @bedels = Bedel.filter_by_turno_apellido(bedel_params[:turno], bedel_params[:apellido])
     # Only show id, turno, nombre, apellido
     render json: @bedels
   end
@@ -22,11 +22,10 @@ class BedelesController < ApplicationController
   # POST /bedels
   def create
     @bedel = Bedel.new(bedel_params)
-
     if @bedel.save
       render json: @bedel, status: :created
     else
-      render json: @bedel.errors, status: :unprocessable_entity
+      render json: { error: @bedel.errors[:errors] }, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotUnique
     render json: { error: 'Identificador Repetido' }, status: :unprocessable_entity

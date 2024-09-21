@@ -4,7 +4,7 @@ RSpec.describe ReservaEsporadica, type: :model do
   before do
     # Create a bedel and a few reservas to query later
     @bedel = Bedel.create!(id: 'bedel', turno: Bedel.turnos.keys.sample, nombre: 'Juan', apellido: 'Perez',
-                           password: '123')
+                           password: '12&A45678')
     hash_reserva = { id_docente: '1', nombre_docente: 'Juan', apellido_docente: 'Perez',
                      correo_docente: 'test@test.com', id_curso: 1, nombre_curso: 'Curso', año: 2023, cantidad_alumnos: 15, fecha_solicitud: Date.today - 1.year }
     @reserva_curso_1 = @bedel.reservas_esporadicas.create!(hash_reserva)

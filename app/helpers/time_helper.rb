@@ -11,4 +11,10 @@ module TimeHelper
     # Devuelve un string con el rango de horas en formato "(hh:mm,hh:mm)"
     "[#{hora_inicio},#{hora_fin})"
   end
+  # Compara dos horas en formato string y devuelve true si la hora de fin es posterior a la hora de inicio en el caso de 22:00 y 04:00 devuelve false
+  def hora_fin_after_inicio(hora_inicio,hora_fin)
+    hora_inicio = Time.parse(hora_inicio)
+    hora_fin = Time.parse(hora_fin)
+    hora_fin > hora_inicio
+  end
 end

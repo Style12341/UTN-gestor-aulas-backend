@@ -14,4 +14,16 @@ module DateHelper
     }
     day_to_wday[day_name]
   end
+  def wday_to_day(num)
+    num_to_day = {
+      1 => 'Lunes',
+      2 => 'Martes',
+      3 => 'Miércoles',
+      4 => 'Jueves',
+      5 => 'Viernes',
+      6 => 'Sábado',
+      0 => 'Domingo'
+    }
+    num_to_day[num]
+  end
 end
