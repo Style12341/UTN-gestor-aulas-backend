@@ -18,6 +18,10 @@ class Aula < ApplicationRecord
     nil
   end
 
+  def self.get_compatibles(tipo, cantidad_alumnos)
+    where(tipo:).where('capacidad >= ?', cantidad_alumnos)
+  end
+
   # get caracteristicas with their cantidad on caracteristicas_aula
   def caracteristicas_con_cantidad
     # Load all caractristicas

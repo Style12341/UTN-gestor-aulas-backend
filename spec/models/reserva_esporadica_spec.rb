@@ -19,9 +19,9 @@ RSpec.describe ReservaEsporadica, type: :model do
   end
   scenario 'Should return no valid reservas before the given date and the start of year' do
     ReservaEsporadica.where(id: @reservas_ids).delete_all
-    expect(ReservaEsporadica.get_valid_reservas_ids_by_year(Date.today.year)).to be_empty
+    expect(ReservaEsporadica.get_overlap_reservas_ids_by_year(Date.today.year)).to be_empty
   end
   scenario 'Should return valid reservas before the given date and the start of year' do
-    expect(ReservaEsporadica.get_valid_reservas_ids_by_year(Date.today.year)).to eq(@reservas_ids)
+    expect(ReservaEsporadica.get_overlap_reservas_ids_by_year(Date.today.year)).to eq(@reservas_ids)
   end
 end

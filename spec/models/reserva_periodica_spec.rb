@@ -19,14 +19,14 @@ RSpec.describe ReservaPeriodica, type: :model do
     @reservas_ids << @bedel.reservas_periodicas.create!(hash_reserva).id
   end
   scenario 'Should return current year valid reservas' do
-    expect(ReservaPeriodica.get_valid_reservas_ids_by_periodicidad(Date.today.year, :anual)).to eq(@reservas_ids)
+    expect(ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Date.today.year, :anual)).to eq(@reservas_ids)
   end
   scenario 'Should only return anuales and cuatrimestre_1 reservas' do
-    expect(ReservaPeriodica.get_valid_reservas_ids_by_periodicidad(Date.today.year,
+    expect(ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Date.today.year,
                                                              :cuatrimestre_1)).to eq(@reservas_ids[0..1])
   end
   scenario 'Should only return anuales and cuatrimestre_2 reservas' do
-    expect(ReservaPeriodica.get_valid_reservas_ids_by_periodicidad(Date.today.year,
+    expect(ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Date.today.year,
                                                              :cuatrimestre_2)).to eq([@reservas_ids[0],
                                                                                                  @reservas_ids[2]])
   end
