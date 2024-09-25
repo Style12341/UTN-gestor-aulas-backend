@@ -75,14 +75,7 @@ class ReservasController < ApplicationController
   def still_available(id_aula, horario, fecha: nil, dia: nil, frecuencia: nil)
     controlador = AulasController.new
     controlador.aulas_compatibles_ids = [id_aula]
-    if frecuencia
-      controlador.ids_reservas_p_overlap = ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Time.now.year,
-                                                                                                     frecuencia)
-      controlador.ids_reservas_e_overlap = ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
-    else
-      controlador.ids_reservas_e_overlap = ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
-      controlador.ids_reservas_p_overlap = ReservaPeriodica.get_overlap_reservas_ids_by_fecha(fecha)
-    end
+    controlador.set_ids_overlap(fecha:, frecuencia:)
     ids_aulas_conflicto = controlador.get_ids_aulas_conflicto(horario, fecha:, dia:, frecuencia:)
     !ids_aulas_conflicto.include?(id_aula)
   end

@@ -1,6 +1,6 @@
 class AulasController < ApplicationController
   include TimeHelper
-  attr_writer :aulas_compatibles_ids, :ids_reservas_p_overlap, :ids_reservas_e_overlap
+  attr_accessor :aulas_compatibles_ids
 
   # {
   #   frecuencia(opcional): …,
@@ -30,9 +30,7 @@ class AulasController < ApplicationController
     # Se obtienen las reservas validas, aquellas que fueron realizadas este año, que caigan en el periodo de la reserva
     @frecuencia = params[:frecuencia]
 
-    @ids_reservas_p_overlap = ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Time.now.year,
-                                                                                        @frecuencia)
-    @ids_reservas_e_overlap = ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
+    set_ids_overlap_periodica(@frecuencia)
     params[:renglones].each do |r|
       dia_numero = day_to_wday(r[:dia])
       hora_inicio = r[:hora_inicio]
@@ -61,10 +59,9 @@ class AulasController < ApplicationController
     @aulas_compatibles_ids = Aula.get_compatibles(params[:tipo_aula], params[:cantidad_alumnos]).pluck(:id)
     return render json: { error: 'No hay aulas disponibles' } if @aulas_compatibles_ids.empty?
 
-    @ids_reservas_e_overlap = ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
     params[:renglones].each do |r|
       fecha = r[:fecha]
-      @ids_reservas_p_overlap = ReservaPeriodica.get_overlap_reservas_ids_by_fecha(fecha)
+      set_ids_overlap_esporadica(fecha)
       hora_inicio = r[:hora_inicio]
       hora_fin = get_hora_fin(hora_inicio, r[:duracion])
       horario = get_time_range_string(hora_inicio, hora_fin)
@@ -75,6 +72,7 @@ class AulasController < ApplicationController
       else
         @conflictos[r[:id]] = get_conflictos(horario, fecha:)
       end
+      @ids_reservas_p_overlap = nil
     end
     if @conflictos.present?
       render json: { error: 'Algunas reservas no encontraron algún aula disponible', conflictos: @conflictos },
@@ -91,6 +89,22 @@ class AulasController < ApplicationController
       @aulas_compatibles_ids, @ids_reservas_p_overlap, horario, dia:, fecha:
     )
     (conflicto_dias_ids_aulas + conflicto_periodos_ids_aulas).uniq
+  end
+
+  def set_ids_overlap(fecha: nil, frecuencia: nil)
+    set_ids_overlap_esporadica(fecha) if fecha
+    set_ids_overlap_periodica(frecuencia) if frecuencia
+  end
+
+  def set_ids_overlap_periodica(frecuencia)
+    @ids_reservas_p_overlap ||= ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Time.now.year,
+                                                                                          frecuencia)
+    @ids_reservas_e_overlap ||= ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
+  end
+
+  def set_ids_overlap_esporadica(fecha)
+    @ids_reservas_e_overlap ||= ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
+    @ids_reservas_p_overlap ||= ReservaPeriodica.get_overlap_reservas_ids_by_fecha(fecha)
   end
 
   private
