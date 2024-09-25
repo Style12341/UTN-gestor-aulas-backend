@@ -149,4 +149,120 @@ RSpec.describe 'Reservas', type: :request do
     expect(response).to have_http_status(:created)
     expect(JSON.parse(response.body)).to eq('message' => 'success')
   end
+  scenario 'tries to create a reserva periodica but aula was reserved before confirmation' do
+    post '/reservas/periodica', params: {
+      bedel_id: @bedel.id,
+      id_docente: @docente_id,
+      id_curso: @curso_id,
+      frecuencia: :cuatrimestre_1,
+      correo_contacto: 'test@test.com',
+      cantidad_alumnos: 40,
+      renglones: [
+        {
+          numero_aula: @aula.numero_aula,
+          dia: :lunes,
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        },
+        {
+          numero_aula: @aula.numero_aula,
+          dia: :martes,
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        }
+      ]
+    }
+    expect(response).to have_http_status(:created)
+    expect(JSON.parse(response.body)).to eq('message' => 'success')
+    r = ReservaPeriodica.first
+    expect(r.correo_docente).to eq('test@test.com')
+    expect(r.cantidad_alumnos).to eq(40)
+    expect(r.periodicidad).to eq('cuatrimestre_1')
+    expect(r.bedel_id).to eq(@bedel.id)
+    expect(r.id_docente).to eq(@docente_id)
+    expect(r.renglones.count).to eq(2)
+    post '/reservas/periodica', params: {
+      bedel_id: @bedel.id,
+      id_docente: @docente_id,
+      id_curso: @curso_id,
+      frecuencia: :cuatrimestre_1,
+      correo_contacto: 'test@test.com',
+      cantidad_alumnos: 40,
+      renglones: [
+        {
+          numero_aula: @aula.numero_aula,
+          dia: :lunes,
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        },
+        {
+          numero_aula: @aula.numero_aula,
+          dia: :martes,
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        }
+      ]
+    }
+    expect(response).to have_http_status(:conflict)
+    body = JSON.parse(response.body)
+    expect(body['error']).to eq('Error aula reservada')
+    expect(body['message']).to eq('Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente')
+  end
+  scenario 'tries to create a reserva esporadica but aula was reserved before confirmation' do
+    post '/reservas/esporadica', params: {
+      bedel_id: @bedel.id,
+      id_docente: @docente_id,
+      id_curso: @curso_id,
+      correo_contacto: 'test@test.com',
+      cantidad_alumnos: 40,
+      renglones: [
+        {
+          numero_aula: @aula.numero_aula,
+          fecha: '2021-01-01',
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        },
+        {
+          numero_aula: @aula.numero_aula,
+          fecha: '2021-01-02',
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        }
+      ]
+    }
+    expect(response).to have_http_status(:created)
+    expect(JSON.parse(response.body)).to eq('message' => 'success')
+    r = ReservaEsporadica.first
+    expect(r.correo_docente).to eq('test@test.com')
+    expect(r.cantidad_alumnos).to eq(40)
+    expect(r.periodicidad).to eq(nil)
+    expect(r.bedel_id).to eq(@bedel.id)
+    expect(r.id_docente).to eq(@docente_id)
+    expect(r.renglones.count).to eq(2)
+    post '/reservas/esporadica', params: {
+      bedel_id: @bedel.id,
+      id_docente: @docente_id,
+      id_curso: @curso_id,
+      correo_contacto: 'test@test.com',
+      cantidad_alumnos: 40,
+      renglones: [
+        {
+          numero_aula: @aula.numero_aula,
+          fecha: '2021-01-01',
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        },
+        {
+          numero_aula: @aula.numero_aula,
+          fecha: '2021-01-02',
+          hora_inicio: '08:00',
+          duracion: '02:00'
+        }
+      ]
+    }
+    expect(response).to have_http_status(:conflict)
+    body = JSON.parse(response.body)
+    expect(body['error']).to eq('Error aula reservada')
+    expect(body['message']).to eq('Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente')
+  end
 end

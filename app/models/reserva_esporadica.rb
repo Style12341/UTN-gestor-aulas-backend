@@ -5,4 +5,8 @@ class ReservaEsporadica < Reserva
   def self.get_overlap_reservas_ids_by_year(año)
     where(año:).pluck(:id)
   end
+
+  def add_renglon(fecha, horario, aula)
+    renglones.create!(fecha:, horario:, aula:)
+  end
 end

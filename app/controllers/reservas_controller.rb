@@ -30,7 +30,13 @@ class ReservasController < ApplicationController
       hora_fin = get_hora_fin(r[:hora_inicio], r[:duracion])
       horario = get_time_range_string(r[:hora_inicio], hora_fin)
       aula = Aula.find_by(numero_aula: r[:numero_aula])
-      reserva.renglones.create!(dia: r[:dia], horario:, aula:)
+      if still_available(aula.id, horario, dia: day_to_wday(r[:dia]), frecuencia: reserva.periodicidad)
+        reserva.add_renglon(r[:dia], horario, aula)
+      else
+        render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
+               status: :conflict
+        return
+      end
     end
     render json: { message: 'success' }, status: :created
   end
@@ -53,10 +59,31 @@ class ReservasController < ApplicationController
       hora_fin = get_hora_fin(r[:hora_inicio], r[:duracion])
       horario = get_time_range_string(r[:hora_inicio], hora_fin)
       aula = Aula.find_by(numero_aula: r[:numero_aula])
-      reserva.renglones.create!(fecha: r[:fecha], horario:, aula:)
+      if still_available(aula.id, horario, fecha: r[:fecha])
+        reserva.add_renglon(r[:fecha], horario, aula)
+      else
+        render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
+               status: :conflict
+        return
+      end
     end
     render json: { message: 'success' }, status: :created
   end
 
-  # get out of params
+  private
+
+  def still_available(id_aula, horario, fecha: nil, dia: nil, frecuencia: nil)
+    controlador = AulasController.new
+    controlador.aulas_compatibles_ids = [id_aula]
+    if frecuencia
+      controlador.ids_reservas_p_overlap = ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Time.now.year,
+                                                                                                     frecuencia)
+      controlador.ids_reservas_e_overlap = ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
+    else
+      controlador.ids_reservas_e_overlap = ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
+      controlador.ids_reservas_p_overlap = ReservaPeriodica.get_overlap_reservas_ids_by_fecha(fecha)
+    end
+    ids_aulas_conflicto = controlador.get_ids_aulas_conflicto(horario, fecha:, dia:, frecuencia:)
+    !ids_aulas_conflicto.include?(id_aula)
+  end
 end

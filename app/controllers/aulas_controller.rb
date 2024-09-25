@@ -1,5 +1,7 @@
 class AulasController < ApplicationController
   include TimeHelper
+  attr_writer :aulas_compatibles_ids, :ids_reservas_p_overlap, :ids_reservas_e_overlap
+
   # {
   #   frecuencia(opcional): …,
   #   tipo_aula: “regular” o “multimedia” o “informatica”,
@@ -82,15 +84,16 @@ class AulasController < ApplicationController
     end
   end
 
-  private
-
   def get_ids_aulas_conflicto(horario, fecha: nil, dia: nil, frecuencia: nil)
     conflicto_dias_ids_aulas = RenglonReservaEsporadica.get_ids_aulas_conflictos(@aulas_compatibles_ids, @ids_reservas_e_overlap, horario, dia:,
-    fecha:, frecuencia:)
+                                                                                                                                           fecha:, frecuencia:)
     conflicto_periodos_ids_aulas = RenglonReservaPeriodica.get_ids_aulas_conflictos(
-      @aulas_compatibles_ids, @ids_reservas_p_overlap, horario, dia:, fecha:)
+      @aulas_compatibles_ids, @ids_reservas_p_overlap, horario, dia:, fecha:
+    )
     (conflicto_dias_ids_aulas + conflicto_periodos_ids_aulas).uniq
   end
+
+  private
 
   def get_conflictos(horario, dia: nil, fecha: nil, frecuencia: nil)
     least_conflicto_dias = RenglonReservaEsporadica.get_conflictos_with_least_overlap(@aulas_compatibles_ids,

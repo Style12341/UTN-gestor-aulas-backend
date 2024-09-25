@@ -20,4 +20,8 @@ class ReservaPeriodica < Reserva
     periodicidad = Periodo.getPeriodoByFecha(fecha)
     where(año:).where(periodicidad: [:anual, periodicidad]).pluck(:id)
   end
+
+  def add_renglon(dia, horario, aula)
+    renglones.create!(dia:, horario:, aula:)
+  end
 end
