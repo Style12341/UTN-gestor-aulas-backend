@@ -16,6 +16,7 @@ services:
     profiles: 
       - front-dev
       - prod
+    restart: always
   backend:
     image: style12341/gestor-aulas:latest
     command: "./bin/rails server"
@@ -29,7 +30,6 @@ services:
       - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
     volumes:
       - app-storage:/rails/storage
-      - ./public/files:/rails/public/files
     depends_on:
       - db
     ports:
@@ -37,6 +37,7 @@ services:
     profiles: 
       - front-dev
       - prod
+    restart: always
   frontend:
     image: style12341/gestor-aulas-front:latest
     command: "npm run dev"
@@ -47,6 +48,7 @@ services:
     profiles:
       - back-dev
       - prod
+    restart: always
 
 volumes:
   postgres_data: {}
