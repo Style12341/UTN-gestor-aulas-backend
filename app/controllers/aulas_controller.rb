@@ -175,6 +175,7 @@ class AulasController < ApplicationController
     fin_cuatrimestre_uno = Periodo.final_cuatrimestre_1_actual
     return true if Time.now <= fin_cuatrimestre_uno
 
+    frecuencia = '1er cuatrimestre' if frecuencia == 'cuatrimestre_1'
     render json: { error: 'periodo invalido', message: "No será posible realizar una reserva del tipo #{frecuencia} al haber finalizado el primer cuatrimestre." },
            status: :bad_request
     false
