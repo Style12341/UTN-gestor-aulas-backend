@@ -5,7 +5,7 @@ class CreateReservas < ActiveRecord::Migration[7.1]
       t.string :nombre_docente
       t.string :apellido_docente
       t.string :correo_docente
-      t.integer :id_curso
+      t.string :id_curso
       t.string :nombre_curso
       t.string :año
       t.integer :cantidad_alumnos

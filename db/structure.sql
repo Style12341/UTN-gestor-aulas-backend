@@ -222,7 +222,7 @@ CREATE TABLE public.reservas (
     nombre_docente character varying,
     apellido_docente character varying,
     correo_docente character varying,
-    id_curso integer,
+    id_curso character varying,
     nombre_curso character varying,
     "año" character varying,
     cantidad_alumnos integer,

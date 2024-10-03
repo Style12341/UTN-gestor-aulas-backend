@@ -22,6 +22,7 @@ class ReservaPeriodica < Reserva
   end
 
   def add_renglon(dia, horario, aula)
-    renglones.create!(dia:, horario:, aula:)
+    r = RenglonReservaPeriodica.new(dia:, horario:, aula:)
+    renglones << r
   end
 end

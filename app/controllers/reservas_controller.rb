@@ -17,13 +17,13 @@ class ReservasController < ApplicationController
   def create_periodica
     docente = DocentesController.get_docente_by_id(params[:id_docente])
     curso = CursosController.get_course_by_id(params[:id_curso])
-    params[:bedel_id] = Bedel.first.id if params[:bedel_id] == 'admin'
+    bedel = (params[:bedel_id] == 'admin' ? Bedel.first : Bedel.find(params[:bedel_id]))
     if docente.nil? || curso.nil?
       render json: { error: 'Docente o curso no encontrado' }, status: :bad_request
       return
     end
     reserva_params = { correo_docente: params[:correo_contacto], año: Time.now.year, cantidad_alumnos: params[:cantidad_alumnos], fecha_solicitud: Time.now,
-                       periodicidad: params[:frecuencia], bedel_id: params[:bedel_id] }.merge(docente).merge(curso)
+                       periodicidad: params[:frecuencia], bedel: }.merge(docente).merge(curso)
     # wrap in a transaction
     reserva = ReservaPeriodica.create!(reserva_params)
     params[:renglones].each do |r|
@@ -46,13 +46,13 @@ class ReservasController < ApplicationController
   def create_esporadica
     docente = DocentesController.get_docente_by_id(params[:id_docente])
     curso = CursosController.get_course_by_id(params[:id_curso])
-    params[:bedel_id] = Bedel.first.id if params[:bedel_id] == 'admin'
+    bedel = (params[:bedel_id] == 'admin' ? Bedel.first : Bedel.find(params[:bedel_id]))
     if docente.nil? || curso.nil?
       render json: { error: 'Docente o curso no encontrado' }, status: :bad_request
       return
     end
     reserva_params = { correo_docente: params[:correo_contacto], año: Time.now.year, cantidad_alumnos: params[:cantidad_alumnos], fecha_solicitud: Time.now,
-                       periodicidad: params[:frecuencia], bedel_id: params[:bedel_id] }.merge(docente).merge(curso)
+                       periodicidad: params[:frecuencia], bedel: }.merge(docente).merge(curso)
     # wrap in a transaction
     reserva = ReservaEsporadica.create!(reserva_params)
     params[:renglones].each do |r|

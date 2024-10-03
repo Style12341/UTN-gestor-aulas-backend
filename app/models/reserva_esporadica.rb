@@ -7,6 +7,8 @@ class ReservaEsporadica < Reserva
   end
 
   def add_renglon(fecha, horario, aula)
-    renglones.create!(fecha:, horario:, aula:)
+    # TODO: Create renglon then add
+    r = RenglonReservaEsporadica.new(fecha:, horario:, aula:)
+    renglones << r
   end
 end
