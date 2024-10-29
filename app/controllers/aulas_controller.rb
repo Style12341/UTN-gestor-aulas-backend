@@ -21,7 +21,6 @@ class AulasController < ApplicationController
   before_action :fecha_valida?, only: %i[esporadica]
   def periodica
     # Obtencion de aulas que esten dentro del criterio de tipo_aula y capacidad >= cantidad_alumnos
-
     @ans = {}
     @conflictos = {}
     @aulas_compatibles_ids = Aula.get_compatibles(params[:tipo_aula], params[:cantidad_alumnos]).pluck(:id)
@@ -83,8 +82,7 @@ class AulasController < ApplicationController
   end
 
   def get_ids_aulas_conflicto(horario, fecha: nil, dia: nil, frecuencia: nil)
-    conflicto_dias_ids_aulas = RenglonReservaEsporadica.get_ids_aulas_conflictos(@aulas_compatibles_ids, @ids_reservas_e_overlap, horario, dia:,
-                                                                                                                                           fecha:, frecuencia:)
+    conflicto_dias_ids_aulas = RenglonReservaEsporadica.get_ids_aulas_conflictos(@aulas_compatibles_ids, @ids_reservas_e_overlap, horario, dia:,fecha:, frecuencia:)
     conflicto_periodos_ids_aulas = RenglonReservaPeriodica.get_ids_aulas_conflictos(
       @aulas_compatibles_ids, @ids_reservas_p_overlap, horario, dia:, fecha:
     )

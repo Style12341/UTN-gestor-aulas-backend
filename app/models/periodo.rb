@@ -36,7 +36,7 @@ class Periodo < ApplicationRecord
     when :cuatrimestre_1
       p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_uno
     when :cuatrimestre_2
-      p.inicio_cuatrimestre_dos..p.fin_cuatrimestre_uno
+      p.inicio_cuatrimestre_dos..p.fin_cuatrimestre_dos
     when :anual
       p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_dos
     end
