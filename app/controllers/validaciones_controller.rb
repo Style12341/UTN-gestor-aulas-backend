@@ -3,13 +3,13 @@ class ValidacionesController < ApplicationController
     errors = []
 
     if password.present?
-      errors << 'debe contener al menos 1 dígito' unless password.match(/\d/)
+      errors << 'La contraseña debe contener al menos 1 dígito' unless password.match(/\d/)
 
-      errors << 'debe contener al menos 1 mayúscula' unless password.match(/[A-Z]/)
+      errors << 'La contraseña debe contener al menos 1 mayúscula' unless password.match(/[A-Z]/)
 
-      errors << "debe contener al menos 1 caracter especial(@\#$%&*)" unless password.match(/[@#$%&*]/)
+      errors << "La contraseña debe contener al menos 1 caracter especial(@\#$%&*)" unless password.match(/[@#$%&*]/)
 
-      errors << 'debe tener por lo menos 8 caracteres' if password.length < 8
+      errors << 'La contraseña debe tener por lo menos 8 caracteres' if password.length < 8
     end
 
     errors
