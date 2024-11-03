@@ -22,7 +22,7 @@ RSpec.describe 'Bedeles', type: :request do
     post 'http://localhost:3000/bedeles', params: { apellido: 'test_apellido', id: 'tt1', nombre: 'test_nombre', password: '1234567A', turno: 'mañana' }
     expect(response).to have_http_status(:unprocessable_entity)
     post = JSON.parse(response.body)
-    expect(post['error']).to eq(["La contraseña debe contener al menos 1 caracter especial(@#$%&*)"])
+    expect(post['error']).to eq(["La contraseña debe contener al menos 1 caracter especial (@#$%&*)"])
 
   end
   scenario 'Sends a post request to create a bedel and password fails condition digit' do
@@ -41,6 +41,6 @@ RSpec.describe 'Bedeles', type: :request do
     post 'http://localhost:3000/bedeles', params: { apellido: 'test_apellido', id: 'tt1', nombre: 'test_nombre', password: 'aaaaaaa', turno: 'mañana' }
     expect(response).to have_http_status(:unprocessable_entity)
     post = JSON.parse(response.body)
-    expect(post['error']).to eq(["La contraseña debe contener al menos 1 dígito", "La contraseña debe contener al menos 1 mayúscula", "La contraseña debe contener al menos 1 caracter especial(@#$%&*)", "La contraseña debe tener por lo menos 8 caracteres"])
+    expect(post['error']).to eq(["La contraseña debe contener al menos 1 dígito", "La contraseña debe contener al menos 1 mayúscula", "La contraseña debe contener al menos 1 caracter especial (@#$%&*)", "La contraseña debe tener por lo menos 8 caracteres"])
   end
 end

@@ -7,7 +7,7 @@ class ValidacionesController < ApplicationController
 
       errors << 'La contraseña debe contener al menos 1 mayúscula' unless password.match(/[A-Z]/)
 
-      errors << "La contraseña debe contener al menos 1 caracter especial(@\#$%&*)" unless password.match(/[@#$%&*]/)
+      errors << "La contraseña debe contener al menos 1 caracter especial (@\#$%&*)" unless password.match(/[@#$%&*]/)
 
       errors << 'La contraseña debe tener por lo menos 8 caracteres' if password.length < 8
     end
@@ -20,7 +20,7 @@ class ValidacionesController < ApplicationController
     validaciones = []
     validaciones << 'La contraseña debe contener al menos 1 dígito'
     validaciones << 'La contraseña debe contener al menos 1 mayúscula'
-    validaciones << "La contraseña debe contener al menos 1 caracter especial(@#$%&*)"
+    validaciones << "La contraseña debe contener al menos 1 caracter especial (@#$%&*)"
     validaciones << 'La contraseña debe tener por lo menos 8 caracteres'
     render json: validaciones
   end
