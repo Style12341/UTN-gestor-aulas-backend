@@ -2,6 +2,7 @@ class AulasController < ApplicationController
   include TimeHelper
   attr_accessor :aulas_compatibles_ids
 
+  include CheckDisponibilidad
   # {
   #   frecuencia(opcional): …,
   #   tipo_aula: “regular” o “multimedia” o “informatica”,
@@ -29,7 +30,7 @@ class AulasController < ApplicationController
     # Se obtienen las reservas validas, aquellas que fueron realizadas este año, que caigan en el periodo de la reserva
     @frecuencia = params[:frecuencia]
 
-    set_ids_overlap_periodica(@frecuencia)
+    set_ids_periodica(@frecuencia)
     params[:renglones].each do |r|
       dia_numero = day_to_wday(r[:dia])
       hora_inicio = r[:hora_inicio]
@@ -60,7 +61,7 @@ class AulasController < ApplicationController
 
     params[:renglones].each do |r|
       fecha = r[:fecha]
-      set_ids_overlap_esporadica(fecha)
+      set_ids_esporadica(fecha)
       hora_inicio = r[:hora_inicio]
       hora_fin = get_hora_fin(hora_inicio, r[:duracion])
       horario = get_time_range_string(hora_inicio, hora_fin)
@@ -81,75 +82,7 @@ class AulasController < ApplicationController
     end
   end
 
-  def get_ids_aulas_conflicto(horario, fecha: nil, dia: nil, frecuencia: nil)
-    conflicto_dias_ids_aulas = RenglonReservaEsporadica.get_ids_aulas_conflictos(@aulas_compatibles_ids, @ids_reservas_e_overlap, horario, dia:,fecha:, frecuencia:)
-    conflicto_periodos_ids_aulas = RenglonReservaPeriodica.get_ids_aulas_conflictos(
-      @aulas_compatibles_ids, @ids_reservas_p_overlap, horario, dia:, fecha:
-    )
-    (conflicto_dias_ids_aulas + conflicto_periodos_ids_aulas).uniq
-  end
-
-  def set_ids_overlap(fecha: nil, frecuencia: nil)
-    set_ids_overlap_esporadica(fecha) if fecha
-    set_ids_overlap_periodica(frecuencia) if frecuencia
-  end
-
-  def set_ids_overlap_periodica(frecuencia)
-    @ids_reservas_p_overlap ||= ReservaPeriodica.get_overlap_reservas_ids_by_periodicidad(Time.now.year,
-                                                                                          frecuencia)
-    @ids_reservas_e_overlap ||= ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
-  end
-
-  def set_ids_overlap_esporadica(fecha)
-    @ids_reservas_e_overlap ||= ReservaEsporadica.get_overlap_reservas_ids_by_year(Time.now.year)
-    @ids_reservas_p_overlap ||= ReservaPeriodica.get_overlap_reservas_ids_by_fecha(fecha)
-  end
-
   private
-
-  def get_conflictos(horario, dia: nil, fecha: nil, frecuencia: nil)
-    least_conflicto_dias = RenglonReservaEsporadica.get_conflictos_with_least_overlap(@aulas_compatibles_ids,
-                                                                                      @ids_reservas_e_overlap, horario, dia:, fecha:, frecuencia:)
-    RenglonReservaPeriodica.get_conflictos(@aulas_compatibles_ids, @ids_reservas_p_overlap, horario, fecha:, dia:)
-                           .find_with_least_overlap(range_or_from: horario).to_a.pluck(:overlap, :reserva_id, :aula_id, :horario, :fecha)
-    least_conflicto_periodos = RenglonReservaPeriodica.get_conflictos_with_least_overlap(@aulas_compatibles_ids,
-                                                                                         @ids_reservas_p_overlap, horario, dia:, fecha:)
-    join_conflictos_serialize(least_conflicto_dias, least_conflicto_periodos)
-  end
-
-  def join_conflictos_serialize(least_conflicto_dias, least_conflicto_periodos)
-    # Dado ambos conflictos nos quedamos con el que tenga menor overlap, verificar si existe primero
-    overlap_dias = least_conflicto_dias[0][0] if least_conflicto_dias[0]
-    overlap_periodos = least_conflicto_periodos[0][0] if least_conflicto_periodos[0]
-    # Overlap is given in "HH:MM" format
-    if overlap_dias == overlap_periodos
-      conflictos = least_conflicto_dias + least_conflicto_periodos
-    elsif !overlap_periodos || (overlap_dias && overlap_dias < overlap_periodos)
-      conflictos = least_conflicto_dias
-    elsif overlap_periodos
-      conflictos = least_conflicto_periodos
-    end
-    conflictos.map do |overlap, reserva_id, aula_id, horario, fecha|
-      reserva = Reserva.find(reserva_id)
-      aula = Aula.find(aula_id)
-      {
-        aula: aula.numero_aula,
-        fecha: fecha || 'Periodica',
-        # Horario is a range of dates, we need to get the start hours and end hours
-        horario: "#{horario.begin.strftime('%H:%M')} - #{horario.end.strftime('%H:%M')}",
-        superposicion: overlap,
-        docente: reserva.nombre_docente + ' ' + reserva.apellido_docente,
-        curso: reserva.nombre_curso,
-        correo: reserva.correo_docente
-      }
-    end
-  end
-
-  def get_aulas_disponibles(aulas_compatibles_ids, conflicto_ids_aulas)
-    # Get elements from aulas_compatibles_ids that are not in conflicto_ids_aulas given that both are arrays
-    aulas_libres_ids = aulas_compatibles_ids - conflicto_ids_aulas
-    Aula.get_aulas_with_caracteristicas(aulas_libres_ids)
-  end
 
   def horario_valido?
     # Para cada renglon verificar si es un horario valido
@@ -190,5 +123,47 @@ class AulasController < ApplicationController
       return false
     end
     true
+  end
+
+  def get_aulas_disponibles(aulas_compatibles_ids, conflicto_ids_aulas)
+    # Get elements from aulas_compatibles_ids that are not in conflicto_ids_aulas given that both are arrays
+    aulas_libres_ids = aulas_compatibles_ids - conflicto_ids_aulas
+    Aula.get_aulas_with_caracteristicas(aulas_libres_ids)
+  end
+
+  def get_conflictos(horario, dia: nil, fecha: nil, frecuencia: nil)
+    least_conflicto_dias = RenglonReservaEsporadica.get_conflictos_with_least_overlap(@aulas_compatibles_ids,
+                                                                                      @ids_reservas_e_overlap, horario, dia:, fecha:, frecuencia:)
+    least_conflicto_periodos = RenglonReservaPeriodica.get_conflictos_with_least_overlap(@aulas_compatibles_ids,
+                                                                                         @ids_reservas_p_overlap, horario, dia:, fecha:)
+    join_conflictos_serialize(least_conflicto_dias, least_conflicto_periodos)
+  end
+
+  def join_conflictos_serialize(least_conflicto_dias, least_conflicto_periodos)
+    # Dado ambos conflictos nos quedamos con el que tenga menor overlap, verificar si existe primero
+    overlap_dias = least_conflicto_dias[0][0] if least_conflicto_dias[0]
+    overlap_periodos = least_conflicto_periodos[0][0] if least_conflicto_periodos[0]
+    # Overlap is given in "HH:MM" format
+    if overlap_dias == overlap_periodos
+      conflictos = least_conflicto_dias + least_conflicto_periodos
+    elsif !overlap_periodos || (overlap_dias && overlap_dias < overlap_periodos)
+      conflictos = least_conflicto_dias
+    elsif overlap_periodos
+      conflictos = least_conflicto_periodos
+    end
+    conflictos.map do |overlap, reserva_id, aula_id, horario, fecha|
+      reserva = Reserva.find(reserva_id)
+      aula = Aula.find(aula_id)
+      {
+        aula: aula.numero_aula,
+        fecha: fecha || 'Periodica',
+        # Horario is a range of dates, we need to get the start hours and end hours
+        horario: "#{horario.begin.strftime('%H:%M')} - #{horario.end.strftime('%H:%M')}",
+        superposicion: overlap,
+        docente: reserva.nombre_docente + ' ' + reserva.apellido_docente,
+        curso: reserva.nombre_curso,
+        correo: reserva.correo_docente
+      }
+    end
   end
 end

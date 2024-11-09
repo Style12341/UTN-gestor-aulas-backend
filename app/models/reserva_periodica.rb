@@ -3,7 +3,7 @@ class ReservaPeriodica < Reserva
   validates :periodicidad, presence: true
   has_many :renglones, class_name: 'RenglonReservaPeriodica', dependent: :destroy, foreign_key: 'reserva_id'
   # Se toman como validas las reservas solicitadas en el año dado y que caigan en el periodo de la reserva
-  def self.get_overlap_reservas_ids_by_periodicidad(año, periodicidad)
+  def self.get_reservas_ids_in_ano_periodicidad(año, periodicidad)
     rel = where(año:)
 
     # Si no es anual se busca solo por ese periodo y las anualas
@@ -14,7 +14,7 @@ class ReservaPeriodica < Reserva
   end
 
   # Se toman como validas las reservas solicitadas en el año dado y que caigan en el periodo de la fecha correspondiente
-  def self.get_overlap_reservas_ids_by_fecha(fecha)
+  def self.get_reservas_ids_by_fecha(fecha)
     fecha = fecha.to_date
     año = fecha.year
     periodicidad = Periodo.getPeriodoByFecha(fecha)
