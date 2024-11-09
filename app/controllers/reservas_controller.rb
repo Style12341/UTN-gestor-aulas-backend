@@ -63,18 +63,13 @@ class ReservasController < ApplicationController
         hora_fin = get_hora_fin(r[:hora_inicio], r[:duracion])
         horario = get_time_range_string(r[:hora_inicio], hora_fin)
         aula = Aula.find_by(numero_aula: r[:numero_aula])
-        if still_available(aula.id, horario, fecha: r[:fecha])
-          reserva.add_renglon(r[:fecha], horario, aula)
-        else
-          render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
-                 status: :conflict
-          return
-        end
+        raise ActiveRecord::RecordInvalid unless still_available(aula.id, horario, fecha: r[:fecha])
+
+        reserva.add_renglon(r[:fecha], horario, aula)
       end
     end
   rescue ActiveRecord::RecordInvalid
-    render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
-           status: :bad_request
+    render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' }, status: :conflict
   else
     render json: { message: 'success' }, status: :created
   end
