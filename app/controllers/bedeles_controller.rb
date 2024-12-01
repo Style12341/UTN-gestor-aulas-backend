@@ -36,7 +36,7 @@ class BedelesController < ApplicationController
     if @bedel.update(bedel_params)
       render json: @bedel
     else
-      render json: @bedel.errors, status: :unprocessable_entity
+      render json: { error: @bedel.errors[:errors] }, status: :unprocessable_entity
     end
   end
 
