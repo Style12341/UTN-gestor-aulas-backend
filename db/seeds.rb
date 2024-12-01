@@ -21,7 +21,7 @@ File.open(Rails.root.join('public','docentes.csv'), 'w') do |file|
 end
 # Generate the bedels
 Administrador.create(id: 'admin', password: 'admin')
-50.times do |_i|
+25.times do |_i|
   nombre = Faker::Name.first_name
   apellido = Faker::Name.last_name
   id = "#{nombre[0]}#{apellido[0]}#{rand(1000..9999)}"
@@ -36,11 +36,11 @@ Caracteristica.create!(nombre: 'Calefaccion')
 Caracteristica.create!(nombre: 'Computadora')
 Caracteristica.create!(nombre: 'Televisor')
 5.times do |i|
-  a1 = Aula.create!(numero_aula: i + 1, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:sin_recursos],
+  a1 = Aula.create!(numero_aula: i + 1, piso: 1, tipo: Aula.tipos[:sin_recursos],
                     capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
-  a2 = Aula.create!(numero_aula: i + 6, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:multimedia],
+  a2 = Aula.create!(numero_aula: i + 6, piso: 2, tipo: Aula.tipos[:multimedia],
                     capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
-  a3 = Aula.create!(numero_aula: i + 11, piso: Faker::Number.number(digits: 1), tipo: Aula.tipos[:informatica],
+  a3 = Aula.create!(numero_aula: i + 11, piso: 3, tipo: Aula.tipos[:informatica],
                     capacidad: Faker::Number.number(digits: 2), tipo_pizarron: Aula.tipos_pizarron.keys.sample, habilitada: true)
   3.times do |_j|
     a1.add_caracteristica(Caracteristica.all.sample, Faker::Number.number(digits: 1))
