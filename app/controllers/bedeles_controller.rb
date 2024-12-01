@@ -7,7 +7,7 @@ class BedelesController < ApplicationController
   # The bedels will be filtered by the turno and/or apellido
   def index
     # Case insensitive search
-    @bedels = Bedel.filter_by_turno_apellido(bedel_params[:turno], bedel_params[:apellido])
+    @bedels = Bedel.filter_by_turno_apellido(bedel_params[:turno], bedel_params[:apellido]).order(:apellido)
     # Only show id, turno, nombre, apellido
     render json: @bedels
   end
