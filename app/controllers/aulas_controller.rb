@@ -19,7 +19,8 @@ class AulasController < ApplicationController
   # }
   before_action :horario_valido?, only: %i[periodica esporadica]
   before_action :periodo_valido?, only: %i[periodica]
-  before_action :fecha_valida?, only: %i[esporadica]
+  before_action :fechas_valida?, only: %i[esporadica]
+  before_action :fechas_in_periodo?, only: %i[esporadica]
   def periodica
     # Obtencion de aulas que esten dentro del criterio de tipo_aula y capacidad >= cantidad_alumnos
     @ans = {}
@@ -113,7 +114,7 @@ class AulasController < ApplicationController
   end
 
   # Fecha recibida es mayor o igual a la actual
-  def fecha_valida?
+  def fechas_valida?
     params[:renglones].each do |r|
       fecha = r[:fecha]
       next unless fecha.to_date < Time.now.to_date
@@ -121,6 +122,18 @@ class AulasController < ApplicationController
       render json: { error: 'fecha invalida', message: 'No será posible realizar una reserva para una fecha anterior a la actual.' },
              status: :bad_request
       return false
+    end
+    true
+  end
+
+  # Fecha recibida esta dentro de alguno de los cuatrimestres
+  def fechas_in_periodo?
+    params[:renglones].each do |r|
+      fecha = r[:fecha].to_date
+      next if Periodo.inCuatrimestreUnoActual(fecha) || Periodo.inCuatrimestreDosActual(fecha)
+
+      render json: { error: 'fecha invalida', message: 'No será posible realizar una reserva para una fecha fuera de los cuatrimestres.' },
+             status: :bad_request
     end
     true
   end
