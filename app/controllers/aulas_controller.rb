@@ -30,7 +30,6 @@ class AulasController < ApplicationController
 
     # Se obtienen las reservas validas, aquellas que fueron realizadas este año, que caigan en el periodo de la reserva
     @frecuencia = params[:frecuencia]
-
     set_ids_periodica(@frecuencia)
     params[:renglones].each do |r|
       dia_numero = day_to_wday(r[:dia])

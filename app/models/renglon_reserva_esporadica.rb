@@ -9,8 +9,8 @@ class RenglonReservaEsporadica < ApplicationRecord
     # Se obtiene un intervalo de fechas para la frecuencia dada, para no tener renglones fuera de la frecuencia dada
     # ex, si la frecuencia es cuatrimestral_2 solo deberia haber renglones dentro del intervalo anual y del cuatrimestre 2
     if dia && frecuencia
-      _, final = Periodo.getIntervalo(frecuencia)
-      inicio = Time.now
+      final = Periodo.getIntervalo(frecuencia).end
+      inicio = DateTime.current
       # Si se pasa el dia se busca por dia,extrae que dia es de la fecha
       rel = rel.where("DATE_PART('dow', fecha) = :dia", dia:).where('fecha BETWEEN :inicio AND :final', inicio:, final:)
     elsif fecha
