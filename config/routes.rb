@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   # Route to get periodo information for a determined año
   get 'periodos/:ano', to: 'periodos#show', as: :periodos
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  post 'login', to: 'usuarios#create'
+  post 'login', to: 'usuarios#login'
   # Reservas routes
   post 'disponibilidad/periodica', to: 'aulas#periodica'
   post 'disponibilidad/esporadica', to: 'aulas#esporadica'
