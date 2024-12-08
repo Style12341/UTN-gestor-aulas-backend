@@ -30,7 +30,7 @@ class AulasController < ApplicationController
 
     # Se obtienen las reservas validas, aquellas que fueron realizadas este año, que caigan en el periodo de la reserva
     @frecuencia = params[:frecuencia]
-    set_ids_periodica(@frecuencia)
+    set_ids_reservas(frecuencia: @frecuencia)
     params[:renglones].each do |r|
       dia_numero = day_to_wday(r[:dia])
       hora_inicio = r[:hora_inicio]
@@ -61,7 +61,7 @@ class AulasController < ApplicationController
 
     params[:renglones].each do |r|
       fecha = r[:fecha]
-      set_ids_esporadica(fecha)
+      set_ids_reservas(fecha:)
       hora_inicio = r[:hora_inicio]
       hora_fin = get_hora_fin(hora_inicio, r[:duracion])
       horario = get_time_range_string(hora_inicio, hora_fin)
