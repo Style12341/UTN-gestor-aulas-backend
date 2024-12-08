@@ -27,6 +27,8 @@ class DocentesController < ApplicationController
     { id_docente: docente[0], nombre_docente: docente[1], apellido_docente: docente[2] }
   end
 
+  private
+
   def check_and_reload_docentes
     csv_path = Rails.root.join('public', 'docentes.csv')
     current_hash_signature = calculate_hash_signature(csv_path)
@@ -37,7 +39,7 @@ class DocentesController < ApplicationController
     @@last_hash_signature = current_hash_signature
     reload_docentes_from_csv(csv_path)
   end
-  private
+
   def calculate_hash_signature(file_path)
     # Calculate the hash of the file contents
     Digest::SHA256.file(file_path).hexdigest
