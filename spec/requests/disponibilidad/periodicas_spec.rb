@@ -126,7 +126,7 @@ RSpec.describe 'Disponibilidad', type: :request do
     expect(body['0'][0]['caracteristicas'][1]['cantidad']).to eq(1)
   end
   scenario 'If server date is after 1er_cuatrimestre end date, should return error' do
-    Timecop.travel(Periodo.final_cuatrimestre_1_actual + 1.day)
+    Timecop.travel(Periodo.final_cuatrimestre_uno_actual + 1.day)
     post disponibilidad_periodica_url, params: @reserva_to_make
     expect(response).to have_http_status(:bad_request)
     expect(response.content_type).to eq('application/json; charset=utf-8')

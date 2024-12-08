@@ -6,7 +6,7 @@ class Periodo < ApplicationRecord
   validates :fin_cuatrimestre_dos, presence: true
   validate :validate_date_ranges
 
-  def self.getPeriodo(año)
+  def self.get_periodo_by_year(año)
     # Creates and return a fake Periodo object
     return Periodo.find_by(año:) if Periodo.find_by(año:)
 
@@ -20,9 +20,9 @@ class Periodo < ApplicationRecord
     p1
   end
 
-  def self.getPeriodoByFecha(date)
+  def self.get_periodo_by_fecha(date)
     date = date.to_date unless date.is_a?(Date)
-    periodo = getPeriodo(date.year)
+    periodo = get_periodo_by_year(date.year)
     return :cuatrimestre_1 if date.between?(periodo.inicio_cuatrimestre_uno, periodo.fin_cuatrimestre_uno)
 
     return :cuatrimestre_2 if date.between?(periodo.inicio_cuatrimestre_dos, periodo.fin_cuatrimestre_dos)
@@ -30,37 +30,36 @@ class Periodo < ApplicationRecord
     nil
   end
 
-  def self.inCuatrimestreUnoActual(date)
-    p = getPeriodo(Date.current.year)
+  def self.in_cuatrimestre_uno_actual(date)
+    p = get_periodo_by_year(Date.current.year)
     p.inicio_cuatrimestre_uno <= date && date <= p.fin_cuatrimestre_uno
   end
 
-  def self.inCuatrimestreDosActual(date)
-    p = getPeriodo(Date.current.year)
+  def self.in_cuatrimestre_dos_actual(date)
+    p = get_periodo_by_year(Date.current.year)
     p.inicio_cuatrimestre_dos <= date && date <= p.fin_cuatrimestre_dos
   end
 
-  def self.getIntervalo(frecuencia)
-    p = getPeriodo(Date.current.year)
+  def self.get_intervalo_by_periodicidad(frecuencia)
+    p = get_periodo_by_year(Date.current.year)
     f = frecuencia.to_s
     case f
-    when "cuatrimestre_1"
+    when 'cuatrimestre_1'
       p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_uno
-    when "cuatrimestre_2"
+    when 'cuatrimestre_2'
       p.inicio_cuatrimestre_dos..p.fin_cuatrimestre_dos
-    when "anual"
+    when 'anual'
       p.inicio_cuatrimestre_uno..p.fin_cuatrimestre_dos
     end
   end
 
-
-  def self.final_cuatrimestre_1_actual
-    p = getPeriodo(Date.current.year)
+  def self.final_cuatrimestre_uno_actual
+    p = get_periodo_by_year(Date.current.year)
     p.fin_cuatrimestre_uno
   end
 
-  def self.final_cuatrimestre_2_actual
-    p = getPeriodo(Date.current.year)
+  def self.final_cuatrimestre_dos_actual
+    p = get_periodo_by_year(Date.current.year)
     p.fin_cuatrimestre_dos
   end
 

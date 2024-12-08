@@ -17,7 +17,7 @@ class ReservaPeriodica < Reserva
   def self.get_reservas_ids_by_fecha(fecha)
     fecha = fecha.to_date
     año = fecha.year
-    periodicidad = Periodo.getPeriodoByFecha(fecha)
+    periodicidad = Periodo.get_periodo_by_fecha(fecha)
     where(año:).where(periodicidad: [:anual, periodicidad]).pluck(:id)
   end
 

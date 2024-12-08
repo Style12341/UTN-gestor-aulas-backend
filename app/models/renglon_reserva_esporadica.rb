@@ -16,14 +16,12 @@ class RenglonReservaEsporadica < ApplicationRecord
                                                      )
   end
 
-  private
-
   def self.get_conflictos(ids_aulas, ids_reservas, horario, dia: nil, fecha: nil, frecuencia: nil)
     rel = where(aula_id: ids_aulas, reserva_id: ids_reservas).where('horario && :horario', horario:)
     # Se obtiene un intervalo de fechas para la frecuencia dada, para no tener renglones fuera de la frecuencia dada
     # ex, si la frecuencia es cuatrimestral_2 solo deberia haber renglones dentro del intervalo anual y del cuatrimestre 2
     if dia && frecuencia
-      final = Periodo.getIntervalo(frecuencia).end
+      final = Periodo.get_intervalo_by_periodicidad(frecuencia).end
       inicio = DateTime.current
       # Si se pasa el dia se busca por dia,extrae que dia es de la fecha
       rel = rel.where("DATE_PART('dow', fecha) = :dia", dia:).where('fecha BETWEEN :inicio AND :final', inicio:, final:)
