@@ -134,4 +134,17 @@ RSpec.describe 'Disponibilidad', type: :request do
     expect(body['error']).to eq('periodo invalido')
     expect(body['message']).to eq('No será posible realizar una reserva del tipo anual al haber finalizado el primer cuatrimestre.')
   end
+  scenario 'Should return overlap with reserva esporadica on miercoles' do
+    @reserva_to_make[:renglones][0][:dia] = 'miercoles'
+    @reserva_to_make[:renglones][0][:hora_inicio] = '15:30'
+    post disponibilidad_periodica_url, params: @reserva_to_make
+    expect(response).to have_http_status(:conflict)
+    expect(response.content_type).to eq('application/json; charset=utf-8')
+    body = JSON.parse(response.body)
+    # Body should contain the error message and data pertinent to show the overlap
+    expect(body['error']).to eq('Algunas reservas no encontraron algún aula disponible')
+    expect(body['conflictos']).to be_a(Hash)
+    conflicto = body['conflictos']['0']
+    expect(conflicto.size).to eq(2)
+  end
 end
