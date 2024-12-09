@@ -8,14 +8,11 @@ class Aula < ApplicationRecord
   has_many :caracteristicas, through: :caracteristicas_aula
 
   #   # Returns an array of hashes , each hash will have aula informations and the caracteristicas with their cantidad
-  def self.get_aulas_with_caracteristicas(ids_aulas)
-    ans = Aula.where(id: ids_aulas).order(capacidad: :desc).limit(3).map do |a|
+  def self.get_aulas_with_caracteristicas(aulas)
+    aulas.map do |a|
       { aula: a.numero_aula, piso: a.piso, capacidad: a.capacidad, tipo_pizarron: a.tipo_pizarron.capitalize,
         caracteristicas: a.caracteristicas_con_cantidad }
     end
-    return ans unless ans == []
-
-    nil
   end
 
   def self.get_compatibles(tipo, cantidad_alumnos)

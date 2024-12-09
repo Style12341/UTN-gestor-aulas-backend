@@ -1,6 +1,6 @@
 class AulasController < ApplicationController
   include TimeHelper
-  attr_accessor :aulas_compatibles_ids
+  attr_accessor :aulas_compatibles
 
   include ConflictVerifier
   # {
@@ -25,20 +25,20 @@ class AulasController < ApplicationController
     # Obtencion de aulas que esten dentro del criterio de tipo_aula y capacidad >= cantidad_alumnos
     @ans = {}
     @conflictos = {}
-    @aulas_compatibles_ids = Aula.get_compatibles(params[:tipo_aula], params[:cantidad_alumnos]).pluck(:id)
-    return render json: { error: 'No hay aulas disponibles' } if @aulas_compatibles_ids.empty?
+    @aulas_compatibles = Aula.get_compatibles(params[:tipo_aula], params[:cantidad_alumnos])
+    return render json: { error: 'No hay aulas disponibles' } if @aulas_compatibles.empty?
 
     # Se obtienen las reservas validas, aquellas que fueron realizadas este año, que caigan en el periodo de la reserva
     @frecuencia = params[:frecuencia]
-    set_ids_reservas(frecuencia: @frecuencia)
+    set_reservas(frecuencia: @frecuencia)
     params[:renglones].each do |r|
       dia_numero = day_to_wday(r[:dia])
       hora_inicio = r[:hora_inicio]
       hora_fin = get_hora_fin(hora_inicio, r[:duracion])
       horario = get_time_range_string(hora_inicio, hora_fin)
-      conflicto_ids_aulas = get_ids_aulas_conflicto(horario, dia: dia_numero, frecuencia: @frecuencia)
-      aulas_disponibles = get_aulas_disponibles(@aulas_compatibles_ids, conflicto_ids_aulas)
-      if aulas_disponibles
+      conflicto_aulas = get_aulas_conflicto(horario, dia: dia_numero, frecuencia: @frecuencia)
+      aulas_disponibles = get_aulas_disponibles(@aulas_compatibles, conflicto_aulas)
+      unless aulas_disponibles.empty?
         @ans[r[:id]] = aulas_disponibles
       else
         @conflictos[r[:id]] = get_conflictos(horario, dia: dia_numero, frecuencia: @frecuencia)
@@ -56,23 +56,23 @@ class AulasController < ApplicationController
     # Obtencion de aulas que esten dentro del criterio de tipo_aula y capacidad >= cantidad_alumnos
     @ans = {}
     @conflictos = {}
-    @aulas_compatibles_ids = Aula.get_compatibles(params[:tipo_aula], params[:cantidad_alumnos]).pluck(:id)
-    return render json: { error: 'No hay aulas disponibles' } if @aulas_compatibles_ids.empty?
+    @aulas_compatibles = Aula.get_compatibles(params[:tipo_aula], params[:cantidad_alumnos])
+    return render json: { error: 'No hay aulas disponibles' } if @aulas_compatibles.empty?
 
     params[:renglones].each do |r|
       fecha = r[:fecha]
-      set_ids_reservas(fecha:)
+      set_reservas(fecha:)
       hora_inicio = r[:hora_inicio]
       hora_fin = get_hora_fin(hora_inicio, r[:duracion])
       horario = get_time_range_string(hora_inicio, hora_fin)
-      conflicto_ids_aulas = get_ids_aulas_conflicto(horario, fecha:)
-      aulas_disponibles = get_aulas_disponibles(@aulas_compatibles_ids, conflicto_ids_aulas)
-      if aulas_disponibles
+      conflicto_aulas = get_aulas_conflicto(horario, fecha:)
+      aulas_disponibles = get_aulas_disponibles(@aulas_compatibles, conflicto_aulas)
+      unless aulas_disponibles.empty?
         @ans[r[:id]] = aulas_disponibles
       else
         @conflictos[r[:id]] = get_conflictos(horario, fecha:)
       end
-      @ids_reservas_p_overlap = nil
+      @reservas_p_overlap = nil
     end
     if @conflictos.present?
       render json: { error: 'Algunas reservas no encontraron algún aula disponible', conflictos: @conflictos },
@@ -137,17 +137,17 @@ class AulasController < ApplicationController
     true
   end
 
-  def get_aulas_disponibles(aulas_compatibles_ids, conflicto_ids_aulas)
+  def get_aulas_disponibles(aulas_compatibles, conflicto_aulas)
     # Get elements from aulas_compatibles_ids that are not in conflicto_ids_aulas given that both are arrays
-    aulas_libres_ids = aulas_compatibles_ids - conflicto_ids_aulas
-    Aula.get_aulas_with_caracteristicas(aulas_libres_ids)
+    aulas_libres = aulas_compatibles.select { |aula| !conflicto_aulas.any?{|a| a.id=aula.id} }
+    Aula.get_aulas_with_caracteristicas(aulas_libres)
   end
 
   def get_conflictos(horario, dia: nil, fecha: nil, frecuencia: nil)
-    least_conflicto_dias = RenglonReservaEsporadica.get_conflictos_with_least_overlap(@aulas_compatibles_ids,
-                                                                                      @ids_reservas_e_overlap, horario, dia:, fecha:, frecuencia:)
-    least_conflicto_periodos = RenglonReservaPeriodica.get_conflictos_with_least_overlap(@aulas_compatibles_ids,
-                                                                                         @ids_reservas_p_overlap, horario, dia:, fecha:)
+    least_conflicto_dias = RenglonReservaEsporadica.get_conflictos_with_least_overlap(@aulas_compatibles,
+                                                                                      @reservas_e_overlap, horario, dia:, fecha:, frecuencia:)
+    least_conflicto_periodos = RenglonReservaPeriodica.get_conflictos_with_least_overlap(@aulas_compatibles,
+                                                                                         @reservas_p_overlap, horario, dia:, fecha:)
     join_conflictos_serialize(least_conflicto_dias, least_conflicto_periodos)
   end
 

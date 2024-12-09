@@ -32,7 +32,7 @@ class ReservasController < ApplicationController
         hora_fin = get_hora_fin(r[:hora_inicio], r[:duracion])
         horario = get_time_range_string(r[:hora_inicio], hora_fin)
         aula = Aula.find_by(numero_aula: r[:numero_aula])
-        if still_available(aula.id, horario, dia: day_to_wday(r[:dia]), frecuencia: reserva.periodicidad)
+        if still_available(aula, horario, dia: day_to_wday(r[:dia]), frecuencia: reserva.periodicidad)
           reserva.add_renglon(r[:dia], horario, aula)
         else
           render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
@@ -41,6 +41,10 @@ class ReservasController < ApplicationController
         end
       end
     end
+  rescue ActiveRecord::RecordInvalid
+    render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
+           status: :conflict
+  else
     render json: { message: 'success' }, status: :created
   end
 
@@ -63,9 +67,13 @@ class ReservasController < ApplicationController
         hora_fin = get_hora_fin(r[:hora_inicio], r[:duracion])
         horario = get_time_range_string(r[:hora_inicio], hora_fin)
         aula = Aula.find_by(numero_aula: r[:numero_aula])
-        raise ActiveRecord::RecordInvalid unless still_available(aula.id, horario, fecha: r[:fecha])
-
-        reserva.add_renglon(r[:fecha], horario, aula)
+        if still_available(aula, horario, fecha: r[:fecha])
+          reserva.add_renglon(r[:fecha], horario, aula)
+        else
+          render json: { error: 'Error aula reservada', message: 'Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente' },
+                 status: :conflict
+          return
+        end
       end
     end
   rescue ActiveRecord::RecordInvalid
@@ -77,10 +85,10 @@ class ReservasController < ApplicationController
 
   private
 
-  def still_available(id_aula, horario, fecha: nil, dia: nil, frecuencia: nil)
-    set_aulas_compatibles_ids([id_aula])
-    set_ids_reservas(fecha:, frecuencia:)
-    ids_aulas_conflicto = get_ids_aulas_conflicto(horario, fecha:, dia:, frecuencia:)
-    !ids_aulas_conflicto.include?(id_aula)
+  def still_available(aula, horario, fecha: nil, dia: nil, frecuencia: nil)
+    set_aulas_compatibles([aula])
+    set_reservas(fecha:, frecuencia:)
+    aulas_conflicto = get_aulas_conflicto(horario, fecha:, dia:, frecuencia:)
+    !aulas_conflicto.any? { |a| a.id == aula.id }
   end
 end

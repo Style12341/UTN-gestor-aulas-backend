@@ -10,18 +10,18 @@ RSpec.describe ReservaEsporadica, type: :model do
     @reserva_curso_1 = @bedel.reservas_esporadicas.create!(hash_reserva)
     hash_reserva[:año] = 2024
     hash_reserva[:fecha_solicitud] = Date.current - 1.day
-    @reservas_ids = []
-    @reservas_ids << @bedel.reservas_esporadicas.create!(hash_reserva).id
+    @reservas = []
+    @reservas << @bedel.reservas_esporadicas.create!(hash_reserva)
     hash_reserva[:fecha_solicitud] = Date.current - 1.month
-    @reservas_ids << @bedel.reservas_esporadicas.create!(hash_reserva).id
+    @reservas << @bedel.reservas_esporadicas.create!(hash_reserva)
     hash_reserva[:fecha_solicitud] = Date.current - 1.week
-    @reservas_ids << @bedel.reservas_esporadicas.create!(hash_reserva).id
+    @reservas << @bedel.reservas_esporadicas.create!(hash_reserva)
   end
   scenario 'Should return no valid reservas before the given date and the start of year' do
-    ReservaEsporadica.where(id: @reservas_ids).delete_all
-    expect(ReservaEsporadica.get_reservas_ids_by_year(Date.current.year)).to be_empty
+    ReservaEsporadica.delete_all
+    expect(ReservaEsporadica.get_reservas_by_year(Date.current.year)).to be_empty
   end
   scenario 'Should return valid reservas before the given date and the start of year' do
-    expect(ReservaEsporadica.get_reservas_ids_by_year(Date.current.year)).to eq(@reservas_ids)
+    expect(ReservaEsporadica.get_reservas_by_year(Date.current.year)).to eq(@reservas)
   end
 end

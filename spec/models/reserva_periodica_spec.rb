@@ -10,24 +10,24 @@ RSpec.describe ReservaPeriodica, type: :model do
     @reserva_curso_1 = @bedel.reservas_periodicas.create!(hash_reserva)
     hash_reserva[:año] = Date.current.year
     hash_reserva[:fecha_solicitud] = Date.current - 1.day
-    @reservas_ids = []
-    @reservas_ids << @bedel.reservas_periodicas.create!(hash_reserva).id
+    @reservas = []
+    @reservas << @bedel.reservas_periodicas.create!(hash_reserva)
     hash_reserva[:periodicidad] = :cuatrimestre_1
-    @reservas_ids << @bedel.reservas_periodicas.create!(hash_reserva).id
+    @reservas << @bedel.reservas_periodicas.create!(hash_reserva)
     hash_reserva[:fecha_solicitud] = Date.current - 1.week
     hash_reserva[:periodicidad] = :cuatrimestre_2
-    @reservas_ids << @bedel.reservas_periodicas.create!(hash_reserva).id
+    @reservas << @bedel.reservas_periodicas.create!(hash_reserva)
   end
   scenario 'Should return current year valid reservas' do
-    expect(ReservaPeriodica.get_reservas_ids_in_ano_periodicidad(Date.current.year, :anual)).to eq(@reservas_ids)
+    expect(ReservaPeriodica.get_reservas_in_ano_periodicidad(Date.current.year, :anual)).to eq(@reservas)
   end
   scenario 'Should only return anuales and cuatrimestre_1 reservas' do
-    expect(ReservaPeriodica.get_reservas_ids_in_ano_periodicidad(Date.current.year,
-                                                             :cuatrimestre_1)).to eq(@reservas_ids[0..1])
+    expect(ReservaPeriodica.get_reservas_in_ano_periodicidad(Date.current.year,
+                                                             :cuatrimestre_1)).to eq(@reservas[0..1])
   end
   scenario 'Should only return anuales and cuatrimestre_2 reservas' do
-    expect(ReservaPeriodica.get_reservas_ids_in_ano_periodicidad(Date.current.year,
-                                                             :cuatrimestre_2)).to eq([@reservas_ids[0],
-                                                                                                 @reservas_ids[2]])
+    expect(ReservaPeriodica.get_reservas_in_ano_periodicidad(Date.current.year,
+                                                             :cuatrimestre_2)).to eq([@reservas[0],
+                                                                                                 @reservas[2]])
   end
 end

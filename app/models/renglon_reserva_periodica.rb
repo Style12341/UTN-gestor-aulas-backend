@@ -5,18 +5,18 @@ class RenglonReservaPeriodica < ApplicationRecord
   belongs_to :reserva, class_name: 'ReservaPeriodica', foreign_key: 'reserva_id'
   belongs_to :aula, class_name: 'Aula', foreign_key: 'aula_id'
 
-  def self.get_ids_aulas_conflictos(ids_aulas, ids_reservas, horario, dia: nil, fecha: nil)
-    get_conflictos(ids_aulas, ids_reservas, horario, dia:, fecha:).select(:aula_id).distinct.pluck(:aula_id)
+  def self.get_aulas_conflictos(aulas, reservas, horario, dia: nil, fecha: nil)
+    get_conflictos(aulas, reservas, horario, dia:, fecha:).includes(:aula).map { |renglon| renglon.aula }
   end
 
-  def self.get_conflictos_with_least_overlap(ids_aulas, ids_reservas, horario, dia: nil, fecha: nil)
-    get_conflictos(ids_aulas, ids_reservas, horario, dia:, fecha:).find_with_least_overlap(range_or_from: horario).to_a.pluck(
+  def self.get_conflictos_with_least_overlap(aulas, reservas, horario, dia: nil, fecha: nil)
+    get_conflictos(aulas, reservas, horario, dia:, fecha:).find_with_least_overlap(range_or_from: horario).to_a.pluck(
       :overlap, :reserva_id, :aula_id, :horario, :fecha
     )
   end
   private
-  def self.get_conflictos(ids_aulas, ids_reservas, horario, dia: nil, fecha: nil)
-    rel = RenglonReservaPeriodica.where(aula_id: ids_aulas, reserva_id: ids_reservas).where('horario && :horario',
+  def self.get_conflictos(aulas, reservas, horario, dia: nil, fecha: nil)
+    rel = RenglonReservaPeriodica.where(aula: aulas, reserva: reservas).where('horario && :horario',
                                                                                             horario:)
     if dia
       rel = rel.where(dia:)

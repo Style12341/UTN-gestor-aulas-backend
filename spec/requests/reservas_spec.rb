@@ -208,7 +208,7 @@ RSpec.describe 'Reservas', type: :request do
     expect(body['error']).to eq('Error aula reservada')
     expect(body['message']).to eq('Hubo un error al seleccionar las aulas, por favor verifique la disponibilidad nuevamente')
   end
-  scenario 'tries to create a reserva esporadica but aula was reserved before confirmation' do
+  scenario 'tries to create a reserva esporadica but aula was reserved before confirmation',important: true do
     post '/reservas/esporadica', params: {
       bedel_id: @bedel.id,
       id_docente: @docente_id,
